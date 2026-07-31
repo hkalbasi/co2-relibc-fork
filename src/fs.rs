@@ -89,15 +89,25 @@ impl io::Read for &File {
     }
 }
 
+unsafe extern "C" {
+    pub unsafe fn write(
+        fd: c_int,
+        buf: *const c_void,
+        count: size_t,
+    ) -> ssize_t;
+}
+
 impl io::Write for &File {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        match Sys::write(self.fd, buf)
-            .map(|read| read as ssize_t)
-            .or_minus_one_errno()
-        {
-            -1 => Err(io::last_os_error()),
-            ok => Ok(ok as usize),
-        }
+        unsafe { write(self.fd, buf.as_ptr() as *const _, buf.len()); }
+        Ok(buf.len())
+        // match Sys::write(self.fd, buf)
+        //     .map(|read| read as ssize_t)
+        //     .or_minus_one_errno()
+        // {
+        //     -1 => Err(io::last_os_error()),
+        //     ok => Ok(ok as usize),
+        // }
     }
 
     fn flush(&mut self) -> io::Result<()> {

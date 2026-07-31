@@ -79,6 +79,10 @@ impl Sys {
     // }
 }
 
+unsafe extern "C" {
+    pub unsafe fn syscall(num: c_long, ...) -> c_long;
+}
+
 impl Pal for Sys {
     fn faccessat(fd: c_int, path: CStr, amode: c_int, flags: c_int) -> Result<()> {
         e_raw(unsafe { syscall!(FACCESSAT, fd, path.as_ptr(), amode, flags) }).map(|_| ())
@@ -282,7 +286,7 @@ impl Pal for Sys {
     #[inline]
     unsafe fn futex_wake(addr: *mut u32, num: u32) -> Result<u32> {
         e_raw(unsafe {
-            syscall!(FUTEX, addr, 1 /* FUTEX_WAKE */, num)
+            syscall(::sc::nr::FUTEX as i64, addr, 1 /* FUTEX_WAKE */, num) as usize
         })
         .map(|n| n as u32)
     }

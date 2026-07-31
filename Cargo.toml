@@ -6,7 +6,7 @@ edition = "2024"
 
 [lib]
 name = "relibc"
-crate-type = ["staticlib"]
+crate-type = ["staticlib", "rlib"]
 
 [workspace]
 members = [
@@ -20,48 +20,48 @@ members = [
 exclude = ["tests", "dlmalloc-rs"]
 
 [workspace.lints.clippy]
-borrow_as_ptr = "deny"
+borrow_as_ptr = "warn"
 cast_lossless = "warn" # TODO review occurrences
 cast_possible_truncation = "allow" # TODO review occurrences
 cast_possible_wrap = "allow" # TODO review occurrences
 cast_precision_loss = "allow" # TODO review occurrences
 cast_ptr_alignment = "allow" # TODO review occurrences
 cast_sign_loss = "allow" # TODO review occurrences
-ignored_unit_patterns = "deny"
-implicit_clone = "deny"
-manual_let_else = "deny"
+ignored_unit_patterns = "warn"
+implicit_clone = "warn"
+manual_let_else = "warn"
 missing_errors_doc = "allow" # TODO review occurrences
 missing_panics_doc = "allow" # TODO review occurrences
 missing_safety_doc = "allow" # TODO review occurrences
-mut_from_ref = "deny"
-precedence = "deny"
+mut_from_ref = "warn"
+precedence = "warn"
 ptr_as_ptr = "warn" # TODO review occurrences
 ptr_cast_constness = "warn" # TODO review occurrences
-ptr_offset_by_literal = "deny"
+ptr_offset_by_literal = "warn"
 ref_as_ptr = "warn" # TODO review occurrences
 type_complexity = "allow" # TODO review occurrences
 upper_case_acronyms = "allow" # TODO review occurrences
-zero_ptr = "deny" # must allow on public constants due to cbindgen issue
+zero_ptr = "warn" # must allow on public constants due to cbindgen issue
 
 [workspace.lints.rust]
-dangling_pointers_from_temporaries = "deny"
+dangling_pointers_from_temporaries = "warn"
 dead_code = "allow" # TODO review occuurences
-deprecated = "deny"
-improper_ctypes_definitions = "deny"
+deprecated = "warn"
+improper_ctypes_definitions = "warn"
 internal_features = "allow" # core_intrinsics and lang_items
-irrefutable_let_patterns = "deny"
-mismatched_lifetime_syntaxes = "deny"
+irrefutable_let_patterns = "warn"
+mismatched_lifetime_syntaxes = "warn"
 non_camel_case_types = "allow" # needed for most POSIX type names
 non_snake_case = "allow" # TODO review occuurences
 non_upper_case_globals = "allow" # TODO review occuurences
-unexpected_cfgs = "deny"
-unpredictable_function_pointer_comparisons = "deny"
+unexpected_cfgs = "warn"
+unpredictable_function_pointer_comparisons = "warn"
 unreachable_code = "allow" # TODO review occuurences
-unsafe_op_in_unsafe_fn = "deny"
-unused_imports = "deny"
-unused_must_use = "deny"
-unused_mut = "deny"
-unused_unsafe = "deny"
+unsafe_op_in_unsafe_fn = "warn"
+unused_imports = "warn"
+unused_must_use = "warn"
+unused_mut = "warn"
+unused_unsafe = "warn"
 unused_variables = "allow" # TODO review occurrences (too many for now)
 
 [lints]

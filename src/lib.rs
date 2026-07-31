@@ -6,7 +6,7 @@
 //!
 //! Currently, Linux and Redox syscall backends are supported.
 
-#![no_std]
+// #![no_std]
 #![feature(alloc_error_handler)]
 #![feature(c_variadic)]
 #![feature(core_intrinsics)]
@@ -57,22 +57,22 @@ pub mod sync;
 
 use crate::platform::{Allocator, NEWALLOCATOR};
 
-#[global_allocator]
+// #[global_allocator]
 static ALLOCATOR: Allocator = NEWALLOCATOR;
 
-#[cfg(not(test))]
+#[cfg(false)]
 #[panic_handler]
 #[linkage = "weak"]
 pub fn rust_begin_unwind(pi: &::core::panic::PanicInfo) -> ! {
     crate::panic::relibc_panic(pi)
 }
 
-#[cfg(not(test))]
+#[cfg(false)]
 #[lang = "eh_personality"]
 #[linkage = "weak"]
 pub extern "C" fn rust_eh_personality() {}
 
-#[cfg(not(test))]
+#[cfg(false)]
 #[alloc_error_handler]
 #[linkage = "weak"]
 #[allow(improper_ctypes_definitions)]

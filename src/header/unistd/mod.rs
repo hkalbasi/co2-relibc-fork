@@ -1379,7 +1379,7 @@ unsafe fn with_argv(
 /// When successful, returns a non-negative number indicating the number of
 /// bytes actually written to the file associated with `fildes`. Upon failure,
 /// returns `-1`.
-#[unsafe(no_mangle)]
+// #[unsafe(no_mangle)]
 pub unsafe extern "C" fn write(fildes: c_int, buf: *const c_void, nbyte: size_t) -> ssize_t {
     let buf = unsafe { slice::from_raw_parts(buf.cast::<u8>(), nbyte) };
     Sys::write(fildes, buf)

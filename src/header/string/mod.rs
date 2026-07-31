@@ -479,7 +479,7 @@ pub unsafe extern "C" fn strlcpy(dst: *mut c_char, src: *const c_char, dstsize: 
 /// including the `NUL` character.
 ///
 /// Always successful. The return value never represents an error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strlen(s: *const c_char) -> size_t {
     unsafe { NulTerminated::new(s) }
         .map(|s| s.count())
