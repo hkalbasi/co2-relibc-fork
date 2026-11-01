@@ -1,11 +1,11 @@
 //! Startup code.
 
 use alloc::vec::Vec;
-use core::ptr;
+use core::{intrinsics, ptr};
 
 use crate::{
     header::{libgen, stdio, stdlib},
-    ld_so::{self},
+    ld_so::{self, tcb::Tcb},
     platform::{self, Pal, Sys, get_auxvs, types::*},
 };
 
@@ -74,7 +74,7 @@ unsafe fn copy_string_array(array: *const *const c_char, len: usize) -> Vec<*mut
 #[unsafe(no_mangle)]
 pub unsafe fn relibc_verify_host() {
     if !Sys::verify() {
-        std::process::abort();
+        intrinsics::abort();
     }
 }
 #[unsafe(link_section = ".init_array")]
@@ -105,10 +105,15 @@ extern "C" fn init_array() {
 
     io_init();
 
-    unsafe {
-        crate::pthread::init();
-        INIT_COMPLETE = true
-    }
+    // If called from .init_array before relibc_start_v1 (static linking),
+    // the TCB may not exist yet. Defer initialization to the second call
+    // from relibc_start_v1 after ld_so::init() has set up TLS.
+    // unsafe {
+    //     if Tcb::current().is_some() {
+    //         crate::pthread::init();
+    //         INIT_COMPLETE = true
+    //     }
+    // }
 }
 
 fn io_init() {
