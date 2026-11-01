@@ -1,11 +1,11 @@
 //! Startup code.
 
 use alloc::vec::Vec;
-use core::{intrinsics, ptr};
+use core::ptr;
 
 use crate::{
     header::{libgen, stdio, stdlib},
-    ld_so::{self, tcb::Tcb},
+    ld_so::{self},
     platform::{self, Pal, Sys, get_auxvs, types::*},
 };
 
@@ -74,7 +74,7 @@ unsafe fn copy_string_array(array: *const *const c_char, len: usize) -> Vec<*mut
 #[unsafe(no_mangle)]
 pub unsafe fn relibc_verify_host() {
     if !Sys::verify() {
-        intrinsics::abort();
+        std::process::abort();
     }
 }
 #[unsafe(link_section = ".init_array")]
