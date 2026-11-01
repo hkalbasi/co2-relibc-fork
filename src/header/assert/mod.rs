@@ -37,5 +37,5 @@ pub unsafe extern "C" fn __assert_fail(
 
     eprintln!("{}: {}:{}: Assertion `{}` failed.", func, file, line, cond);
 
-    core::intrinsics::abort();
+    std::process::abort();
 }

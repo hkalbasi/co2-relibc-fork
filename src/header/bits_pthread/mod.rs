@@ -65,7 +65,20 @@ pub union pthread_spinlock_t {
 #[macro_export]
 macro_rules! pthread_assert_equal_size(
     ($export:ident, $wrapped:ident) => {
-        const _: () = {};
+        const _: () = unsafe {
+            type Wrapped = $crate::header::pthread::$wrapped;
+
+            // Fail at compile-time if sizes differ.
+
+            // TODO: Is this UB?
+            let export = $export { __relibc_internal_align: 0 };
+            let _: Wrapped = core::mem::transmute(export.__relibc_internal_size);
+
+            // Fail at compile-time if alignments differ.
+            let a = [0_u8; core::mem::align_of::<$export>()];
+            #[expect(clippy::useless_transmute)]
+            let b: [u8; core::mem::align_of::<Wrapped>()] = core::mem::transmute(a);
+        };
         // TODO: Turn into a macro?
         #[cfg(all(target_os = "redox", feature = "check_against_libc_crate"))]
         const _: () = unsafe {

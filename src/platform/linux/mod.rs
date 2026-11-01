@@ -528,6 +528,16 @@ impl Pal for Sys {
     }
 
     fn openat(dirfd: c_int, path: CStr, oflag: c_int, mode: mode_t) -> Result<c_int> {
+        // Under Miri, raw syscalls cannot be executed; go through libc so that
+        // Miri's built-in shims handle the call.
+        #[cfg(miri)]
+        unsafe extern "C" {
+            fn open(path: *const c_char, oflag: c_int, ...) -> c_int;
+        }
+        #[cfg(miri)]
+        return e_raw(unsafe { open(path.as_ptr(), oflag, mode as c_uint) } as usize)
+            .map(|fd| fd as c_int);
+        #[cfg(not(miri))]
         e_raw(unsafe { syscall!(OPENAT, dirfd, path.as_ptr(), oflag, mode) }).map(|fd| fd as c_int)
     }
 
@@ -646,6 +656,14 @@ impl Pal for Sys {
     }
 
     fn read(fildes: c_int, buf: &mut [u8]) -> Result<usize> {
+        // Under Miri, use the libc `read` so Miri's shim handles it.
+        #[cfg(miri)]
+        unsafe extern "C" {
+            fn read(fildes: c_int, buf: *mut c_void, count: usize) -> isize;
+        }
+        #[cfg(miri)]
+        return e_raw(unsafe { read(fildes, buf.as_mut_ptr() as *mut c_void, buf.len()) } as usize);
+        #[cfg(not(miri))]
         e_raw(unsafe { syscall!(READ, fildes, buf.as_mut_ptr(), buf.len()) })
     }
     fn pread(fildes: c_int, buf: &mut [u8], off: off_t) -> Result<usize> {
@@ -787,6 +805,15 @@ impl Pal for Sys {
     }
 
     fn write(fildes: c_int, buf: &[u8]) -> Result<usize> {
+        // Under Miri, use the libc `write` so Miri's shim handles it (this is
+        // what makes stderr output visible to Miri).
+        #[cfg(miri)]
+        unsafe extern "C" {
+            fn write(fildes: c_int, buf: *const c_void, count: usize) -> isize;
+        }
+        #[cfg(miri)]
+        return e_raw(unsafe { write(fildes, buf.as_ptr() as *const c_void, buf.len()) } as usize);
+        #[cfg(not(miri))]
         e_raw(unsafe { syscall!(WRITE, fildes, buf.as_ptr(), buf.len()) })
     }
     fn pwrite(fildes: c_int, buf: &[u8], off: off_t) -> Result<usize> {

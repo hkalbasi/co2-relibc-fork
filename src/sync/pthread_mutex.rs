@@ -243,8 +243,6 @@ fn os_tid_invalid_after_fork() -> u32 {
     // threads within possibly distinct processes, using the mutex. OS thread IDs on Redox are
     // pointer-sized, but relibc and POSIX uses int everywhere.
 
-    return 1;
-
     let value = CACHED_OS_TID_INVALID_AFTER_FORK.get();
 
     if value == 0 {

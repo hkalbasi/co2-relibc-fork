@@ -7,7 +7,7 @@ pub extern "C" fn relibc_panic(pi: &::core::panic::PanicInfo) -> ! {
     let mut w = PanicWriter::new();
     let _ = w.write_fmt(format_args!("RELIBC PANIC: {}\n", pi));
 
-    core::intrinsics::abort();
+    std::process::abort();
 }
 
 struct PanicWriter;
