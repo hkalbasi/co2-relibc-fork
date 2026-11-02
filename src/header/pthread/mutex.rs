@@ -97,7 +97,7 @@ pub unsafe extern "C" fn pthread_mutex_trylock(mutex: *mut pthread_mutex_t) -> c
     e((unsafe { &*mutex.cast::<RlctMutex>() }).try_lock())
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_mutex_unlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_mutex_unlock(mutex: *mut pthread_mutex_t) -> c_int {
     e((unsafe { &*mutex.cast::<RlctMutex>() }).unlock())
 }

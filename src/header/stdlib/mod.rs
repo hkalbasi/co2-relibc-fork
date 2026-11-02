@@ -269,7 +269,7 @@ pub unsafe extern "C" fn bsearch(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/calloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn calloc(nelem: size_t, elsize: size_t) -> *mut c_void {
     //Handle possible integer overflow in size calculation
     match nelem.checked_mul(elsize) {
@@ -402,7 +402,7 @@ pub extern "C" fn fcvt(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/free.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn free(ptr: *mut c_void) {
     unsafe { platform::free(ptr) };
 }
@@ -688,7 +688,7 @@ pub extern "C" fn lrand48() -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/malloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn malloc(size: size_t) -> *mut c_void {
     let ptr = unsafe { platform::alloc(size) };
     if ptr.is_null() {
@@ -1175,7 +1175,7 @@ pub unsafe extern "C" fn random() -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/realloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn realloc(ptr: *mut c_void, size: size_t) -> *mut c_void {
     let new_ptr = unsafe { platform::realloc(ptr, size) };
     if new_ptr.is_null() {

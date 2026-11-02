@@ -153,7 +153,7 @@ pub unsafe extern "C" fn memmem(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/memmove.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memmove(s1: *mut c_void, s2: *const c_void, n: size_t) -> *mut c_void {
     if s2 < s1.cast_const() {
         // copy from end
