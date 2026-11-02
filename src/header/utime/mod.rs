@@ -45,7 +45,7 @@ pub struct utimbuf {
 /// uses `time_t` which represents whole seconds only.
 #[deprecated]
 #[expect(deprecated, reason = "utimbuf struct")]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn utime(path: *const c_char, times: *const utimbuf) -> c_int {
     let filename_cstr = unsafe { CStr::from_ptr(path) };
     let times_ref = unsafe { &*times };

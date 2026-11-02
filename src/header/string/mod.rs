@@ -28,7 +28,7 @@ use super::{bits_locale_t::locale_t, locale::THREAD_LOCALE};
 /// The caller must ensure that:
 /// - `n` is not longer than the memory area pointed to by `s1`, and
 /// - `n` is not longer than the memory area pointed to by `s2`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn memccpy(
     s1: *mut c_void,
     s2: *const c_void,
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn memcpy(s1: *mut c_void, s2: *const c_void, n: size_t) -
 /// The caller must ensure that:
 /// - `haystack` is convertible to a `&[u8]` with length `haystacklen`, and
 /// - `needle` is convertible to a `&[u8]` with length `needlelen`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn memmem(
     haystack: *const c_void,
     haystacklen: size_t,
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn memmem(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/memmove.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn memmove(s1: *mut c_void, s2: *const c_void, n: size_t) -> *mut c_void {
     if s2 < s1.cast_const() {
         // copy from end
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn memset(s: *mut c_void, c: c_int, n: size_t) -> *mut c_v
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn stpcpy(mut s1: *mut c_char, mut s2: *const c_char) -> *mut c_char {
     loop {
         unsafe { *s1 = *s2 };
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn stpcpy(mut s1: *mut c_char, mut s2: *const c_char) -> *
 /// # Safety
 /// If copying takes place between objects that overlap, the behaviour is
 /// undefined.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn stpncpy(
     mut s1: *mut c_char,
     mut s2: *const c_char,
@@ -262,13 +262,13 @@ pub unsafe extern "C" fn stpncpy(
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/strstr.3.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcasestr(haystack: *const c_char, needle: *const c_char) -> *mut c_char {
     unsafe { inner_strstr(haystack, needle, !32) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcat(s1: *mut c_char, s2: *const c_char) -> *mut c_char {
     unsafe { strncat(s1, s2, usize::MAX) }
 }
@@ -279,7 +279,7 @@ pub unsafe extern "C" fn strcat(s1: *mut c_char, s2: *const c_char) -> *mut c_ch
 /// The caller is required to ensure that `s` is a valid pointer to a buffer
 /// containing at least one nul value. The pointed-to buffer must not be
 /// modified for the duration of the call.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strchr(s: *const c_char, c: c_int) -> *mut c_char {
     let c_as_c_char = c as c_char;
 
@@ -296,7 +296,7 @@ pub unsafe extern "C" fn strchr(s: *const c_char, c: c_int) -> *mut c_char {
 }
 
 /// Non-POSIX, see <https://man7.org/linux/man-pages/man3/strchr.3.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strchrnul(s: *const c_char, c: c_int) -> *mut c_char {
     let mut s = s.cast_mut();
     loop {
@@ -312,20 +312,20 @@ pub unsafe extern "C" fn strchrnul(s: *const c_char, c: c_int) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcmp(s1: *const c_char, s2: *const c_char) -> c_int {
     unsafe { strncmp(s1, s2, usize::MAX) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcoll_l.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcoll_l(s1: *const c_char, s2: *const c_char, _loc: locale_t) -> c_int {
     // relibc has no locale stuff (yet)
     unsafe { strcmp(s1, s2) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcoll.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcoll(s1: *const c_char, s2: *const c_char) -> c_int {
     unsafe { strcoll_l(s1, s2, THREAD_LOCALE as locale_t) }
 }
@@ -370,19 +370,19 @@ pub unsafe fn inner_strspn(s1: *const c_char, s2: *const c_char, cmp: bool) -> s
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcspn.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcspn(s1: *const c_char, s2: *const c_char) -> size_t {
     unsafe { inner_strspn(s1, s2, false) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strdup.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strdup(s1: *const c_char) -> *mut c_char {
     unsafe { strndup(s1, usize::MAX) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strerror_l.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strerror_l(errnum: c_int, _loc: locale_t) -> *mut c_char {
     use core::fmt::Write;
 
@@ -399,13 +399,13 @@ pub unsafe extern "C" fn strerror_l(errnum: c_int, _loc: locale_t) -> *mut c_cha
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strerror.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strerror(errnum: c_int) -> *mut c_char {
     unsafe { strerror_l(errnum, THREAD_LOCALE as locale_t) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strerror_r.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int {
     let msg = unsafe { strerror(errnum) };
     let len = unsafe { strlen(msg) };
@@ -423,7 +423,7 @@ pub unsafe extern "C" fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: siz
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strlcat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strlcat(dst: *mut c_char, src: *const c_char, dstsize: size_t) -> size_t {
     let dst_len = unsafe { strnlen(dst, dstsize) };
     let d = unsafe { dst.add(dst_len) };
@@ -432,7 +432,7 @@ pub unsafe extern "C" fn strlcat(dst: *mut c_char, src: *const c_char, dstsize: 
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/strsep.3.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strsep(str_: *mut *mut c_char, sep: *const c_char) -> *mut c_char {
     let s = unsafe { *str_ };
     if s.is_null() {
@@ -450,7 +450,7 @@ pub unsafe extern "C" fn strsep(str_: *mut *mut c_char, sep: *const c_char) -> *
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strlcat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strlcpy(dst: *mut c_char, src: *const c_char, dstsize: size_t) -> size_t {
     let mut i = 0;
 
@@ -487,7 +487,7 @@ pub unsafe extern "C" fn strlen(s: *const c_char) -> size_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strncat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strncat(s1: *mut c_char, s2: *const c_char, n: size_t) -> *mut c_char {
     let len = unsafe { strlen(s1.cast()) };
     let mut i = 0;
@@ -506,7 +506,7 @@ pub unsafe extern "C" fn strncat(s1: *mut c_char, s2: *const c_char, n: size_t) 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strncmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strncmp(s1: *const c_char, s2: *const c_char, n: size_t) -> c_int {
     for i in 0..n {
         // These must be cast as u8 to have correct comparisons
@@ -537,14 +537,14 @@ pub unsafe extern "C" fn strncmp(s1: *const c_char, s2: *const c_char, n: size_t
 /// # Safety
 /// If copying takes place between objects that overlap, the behaviour is
 /// undefined.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strncpy(s1: *mut c_char, s2: *const c_char, n: size_t) -> *mut c_char {
     unsafe { stpncpy(s1, s2, n) };
     s1
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strdup.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strndup(s1: *const c_char, size: size_t) -> *mut c_char {
     let len = unsafe { strnlen(s1, size) };
 
@@ -570,7 +570,7 @@ pub unsafe extern "C" fn strnlen(s: *const c_char, size: size_t) -> size_t {
 }
 
 /// Non-POSIX, see <https://en.cppreference.com/w/c/string/byte/strlen>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strnlen_s(s: *const c_char, size: size_t) -> size_t {
     if s.is_null() {
         0
@@ -580,7 +580,7 @@ pub unsafe extern "C" fn strnlen_s(s: *const c_char, size: size_t) -> size_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strpbrk.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strpbrk(s1: *const c_char, s2: *const c_char) -> *mut c_char {
     let p = unsafe { s1.add(strcspn(s1, s2)) };
     if unsafe { *p } != 0 {
@@ -591,7 +591,7 @@ pub unsafe extern "C" fn strpbrk(s1: *const c_char, s2: *const c_char) -> *mut c
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strrchr.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strrchr(s: *const c_char, c: c_int) -> *mut c_char {
     let len = unsafe { strlen(s) } as isize;
     let c = c as c_char;
@@ -606,7 +606,7 @@ pub unsafe extern "C" fn strrchr(s: *const c_char, c: c_int) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strsignal.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strsignal(sig: c_int) -> *mut c_char {
     U8PtrToCCharPtr::cast_mut(
         signal::SIGNAL_STRINGS
@@ -617,7 +617,7 @@ pub unsafe extern "C" fn strsignal(sig: c_int) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strspn.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strspn(s1: *const c_char, s2: *const c_char) -> size_t {
     unsafe { inner_strspn(s1, s2, true) }
 }
@@ -647,20 +647,20 @@ unsafe fn inner_strstr(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strstr.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strstr(haystack: *const c_char, needle: *const c_char) -> *mut c_char {
     unsafe { inner_strstr(haystack, needle, !0) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strtok.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strtok(s1: *mut c_char, delimiter: *const c_char) -> *mut c_char {
     static mut HAYSTACK: *mut c_char = ptr::null_mut();
     unsafe { strtok_r(s1, delimiter, &raw mut HAYSTACK) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strtok.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strtok_r(
     s: *mut c_char,
     delimiter: *const c_char,
@@ -697,7 +697,7 @@ pub unsafe extern "C" fn strtok_r(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strxfrm_l.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strxfrm_l(
     s1: *mut c_char,
     s2: *const c_char,
@@ -713,7 +713,7 @@ pub unsafe extern "C" fn strxfrm_l(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strxfrm.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn strxfrm(s1: *mut c_char, s2: *const c_char, n: size_t) -> size_t {
     unsafe { strxfrm_l(s1, s2, n, THREAD_LOCALE as locale_t) }
 }

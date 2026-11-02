@@ -11,7 +11,7 @@ use crate::{
 pub const FLT_RADIX: c_int = 2;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/float.h.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn flt_rounds() -> c_int {
     match unsafe { fegetround() } {
         FE_TONEAREST => 1,

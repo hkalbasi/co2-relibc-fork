@@ -26,7 +26,7 @@ use crate::{
 ///
 /// # Safety
 /// It is undefined behaviour if `cond` is not initialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_broadcast(cond: *mut pthread_cond_t) -> c_int {
     e((unsafe { &*cond.cast::<RlctCond>() }).broadcast())
 }
@@ -47,7 +47,7 @@ pub unsafe extern "C" fn pthread_cond_broadcast(cond: *mut pthread_cond_t) -> c_
 /// - Use of `cond` after calling this function without reinitializing it.
 /// - Attempting to destroy a condition variable upon which other threads are
 ///   currently blocked.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_destroy(cond: *mut pthread_cond_t) -> c_int {
     // No-op
     unsafe { core::ptr::drop_in_place(cond.cast::<RlctCond>()) };
@@ -69,7 +69,7 @@ pub unsafe extern "C" fn pthread_cond_destroy(cond: *mut pthread_cond_t) -> c_in
 /// It is undefined behaviour for the following:
 /// - `attr` is not initialized when calling this function.
 /// - `cond` has already been initialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_init(
     cond: *mut pthread_cond_t,
     attr: *const pthread_condattr_t,
@@ -105,7 +105,7 @@ pub unsafe extern "C" fn pthread_cond_init(
 ///
 /// # Safety
 /// It is undefined behaviour if `cond` is not initialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_signal(cond: *mut pthread_cond_t) -> c_int {
     e((unsafe { &*cond.cast::<RlctCond>() }).signal())
 }
@@ -127,7 +127,7 @@ pub unsafe extern "C" fn pthread_cond_signal(cond: *mut pthread_cond_t) -> c_int
 /// - `mutex` is uninitialized.
 /// - `mutex` has not been locked by the calling thread before calling this
 ///   function.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_timedwait(
     cond: *mut pthread_cond_t,
     mutex: *mut pthread_mutex_t,
@@ -154,7 +154,7 @@ pub unsafe extern "C" fn pthread_cond_timedwait(
 /// - `mutex` is uninitialized.
 /// - `mutex` has not been locked by the calling thread before calling this
 ///   function.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_clockwait(
     cond: *mut pthread_cond_t,
     mutex: *mut pthread_mutex_t,
@@ -182,7 +182,7 @@ pub unsafe extern "C" fn pthread_cond_clockwait(
 /// - `mutex` is uninitialized.
 /// - `mutex` has not been locked by the calling thread before calling this
 ///   function.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cond_wait(
     cond: *mut pthread_cond_t,
     mutex: *mut pthread_mutex_t,
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn pthread_cond_wait(
 /// It is undefined behaviour for the following:
 /// - `attr` is uninitialized.
 /// - `attr` is used after calling this function without reinitializing it.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_destroy(attr: *mut pthread_condattr_t) -> c_int {
     unsafe { core::ptr::drop_in_place(attr.cast::<RlctCondAttr>()) };
     // No-op
@@ -225,7 +225,7 @@ pub unsafe extern "C" fn pthread_condattr_destroy(attr: *mut pthread_condattr_t)
 ///
 /// # Safety
 /// It is undefined behaviour if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_getclock(
     attr: *const pthread_condattr_t,
     clock_id: *mut clockid_t,
@@ -248,7 +248,7 @@ pub unsafe extern "C" fn pthread_condattr_getclock(
 ///
 /// # Safety
 /// It is undefined behaviour if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_getpshared(
     attr: *const pthread_condattr_t,
     pshared: *mut c_int,
@@ -270,7 +270,7 @@ pub unsafe extern "C" fn pthread_condattr_getpshared(
 ///
 /// # Safety
 /// It is undefined behaviour if `attr` is already initialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_init(attr: *mut pthread_condattr_t) -> c_int {
     unsafe { attr.cast::<RlctCondAttr>().write(RlctCondAttr::default()) };
     0
@@ -287,7 +287,7 @@ pub unsafe extern "C" fn pthread_condattr_init(attr: *mut pthread_condattr_t) ->
 ///
 /// # Safety
 /// It is undefined behaviour if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_setclock(
     attr: *mut pthread_condattr_t,
     clock_id: clockid_t,
@@ -307,7 +307,7 @@ pub unsafe extern "C" fn pthread_condattr_setclock(
 ///
 /// # Safety
 /// It is undefined behaviour if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_condattr_setpshared(
     attr: *mut pthread_condattr_t,
     pshared: c_int,

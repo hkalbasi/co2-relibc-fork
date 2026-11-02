@@ -26,7 +26,7 @@ pub const GRND_RANDOM: c_uint = 2;
 /// See <https://www.man7.org/linux/man-pages/man2/getrandom.2.html>.
 ///
 /// Fills the buffer pointed to by `buf` with up to `buflen` random bytes.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getrandom(buf: *mut c_void, buflen: size_t, flags: c_uint) -> ssize_t {
     Sys::getrandom(
         unsafe { slice::from_raw_parts_mut(buf.cast::<u8>(), buflen) },

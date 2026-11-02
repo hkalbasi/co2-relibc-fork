@@ -34,7 +34,7 @@ pub static mut _HOST_ADDR_LIST: [u8; 4] = [0u8; 4];
 static mut H_POS: usize = 0;
 pub static mut HOST_STAYOPEN: c_int = 0;
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn endhostent() {
     if unsafe { HOSTDB } >= 0
         && let Ok(()) = Sys::close(unsafe { HOSTDB })
@@ -42,7 +42,7 @@ pub unsafe extern "C" fn endhostent() {
     unsafe { HOSTDB = -1 };
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn sethostent(stayopen: c_int) {
     unsafe { HOST_STAYOPEN = stayopen };
     if unsafe { HOSTDB } < 0 {
@@ -52,7 +52,7 @@ pub unsafe extern "C" fn sethostent(stayopen: c_int) {
     unsafe { H_POS = 0 };
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn gethostent() -> *mut hostent {
     if unsafe { HOSTDB } < 0 {
         unsafe { HOSTDB = Sys::open(c"/etc/hosts".into(), O_RDONLY, 0).or_minus_one_errno() };

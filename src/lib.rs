@@ -76,7 +76,7 @@ pub extern "C" fn rust_eh_personality() {}
 #[alloc_error_handler]
 #[linkage = "weak"]
 #[allow(improper_ctypes_definitions)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn rust_oom(layout: ::core::alloc::Layout) -> ! {
     panic!(
         "RELIBC OOM: {} bytes aligned to {} bytes",
@@ -88,7 +88,7 @@ pub extern "C" fn rust_oom(layout: ::core::alloc::Layout) -> ! {
 #[cfg(not(test))]
 #[allow(non_snake_case)]
 #[linkage = "weak"]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn _Unwind_Resume() -> ! {
     panic!("_Unwind_Resume")
 }

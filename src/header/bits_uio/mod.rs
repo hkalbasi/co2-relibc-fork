@@ -23,7 +23,7 @@ use crate::{
 ///
 /// When successful, returns a non-negative number indicating the number of
 /// bytes actually read. Upon failure, returns `-1`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn preadv(
     fd: c_int,
     iov: *const iovec,
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn preadv(
 ///
 /// When successful, returns a non-negative number indicating the number of
 /// bytes actually written. Upon failure, returns `-1`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pwritev(
     fd: c_int,
     iov: *const iovec,

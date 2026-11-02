@@ -154,7 +154,7 @@ fn resolve_path_name(
     None
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn relibc_ld_so_start(
     sp: &'static mut Stack,
     ld_entry: usize,

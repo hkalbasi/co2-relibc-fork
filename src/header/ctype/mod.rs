@@ -13,7 +13,7 @@ use crate::{header::bits_locale_t::locale_t, platform::types::c_int};
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isalnum(c: c_int) -> c_int {
     c_int::from(isdigit(c) != 0 || isalpha(c) != 0)
 }
@@ -28,7 +28,7 @@ pub extern "C" fn isalnum(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isalnum_l(c: c_int, _loc: locale_t) -> c_int {
     isalnum(c)
 }
@@ -41,7 +41,7 @@ pub extern "C" fn isalnum_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isalpha(c: c_int) -> c_int {
     c_int::from(islower(c) != 0 || isupper(c) != 0)
 }
@@ -56,7 +56,7 @@ pub extern "C" fn isalpha(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isalpha_l(c: c_int, _loc: locale_t) -> c_int {
     isalpha(c)
 }
@@ -73,7 +73,7 @@ pub extern "C" fn isalpha_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// Not considered portable for localized applications.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isascii(c: c_int) -> c_int {
     c_int::from((c & !0x7f) == 0)
 }
@@ -86,7 +86,7 @@ pub extern "C" fn isascii(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isblank(c: c_int) -> c_int {
     c_int::from(c == c_int::from(b' ') || c == c_int::from(b'\t'))
 }
@@ -101,7 +101,7 @@ pub extern "C" fn isblank(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isblank_l(c: c_int, _loc: locale_t) -> c_int {
     isblank(c)
 }
@@ -114,7 +114,7 @@ pub extern "C" fn isblank_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn iscntrl(c: c_int) -> c_int {
     c_int::from((0x00..=0x1f).contains(&c) || c == 0x7f)
 }
@@ -129,7 +129,7 @@ pub extern "C" fn iscntrl(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn iscntrl_l(c: c_int, _loc: locale_t) -> c_int {
     iscntrl(c)
 }
@@ -142,7 +142,7 @@ pub extern "C" fn iscntrl_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isdigit(c: c_int) -> c_int {
     c_int::from(c >= c_int::from(b'0') && c <= c_int::from(b'9'))
 }
@@ -157,7 +157,7 @@ pub extern "C" fn isdigit(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isdigit_l(c: c_int, _loc: locale_t) -> c_int {
     isdigit(c)
 }
@@ -171,7 +171,7 @@ pub extern "C" fn isdigit_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isgraph(c: c_int) -> c_int {
     c_int::from((0x21..=0x7e).contains(&c))
 }
@@ -186,7 +186,7 @@ pub extern "C" fn isgraph(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isgraph_l(c: c_int, _loc: locale_t) -> c_int {
     isgraph(c)
 }
@@ -200,7 +200,7 @@ pub extern "C" fn isgraph_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn islower(c: c_int) -> c_int {
     c_int::from(c >= c_int::from(b'a') && c <= c_int::from(b'z'))
 }
@@ -215,7 +215,7 @@ pub extern "C" fn islower(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn islower_l(c: c_int, _loc: locale_t) -> c_int {
     islower(c)
 }
@@ -229,7 +229,7 @@ pub extern "C" fn islower_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isprint(c: c_int) -> c_int {
     c_int::from((0x20..0x7f).contains(&c))
 }
@@ -244,7 +244,7 @@ pub extern "C" fn isprint(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isprint_l(c: c_int, _loc: locale_t) -> c_int {
     isprint(c)
 }
@@ -258,7 +258,7 @@ pub extern "C" fn isprint_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn ispunct(c: c_int) -> c_int {
     c_int::from(
         (c >= c_int::from(b'!') && c <= c_int::from(b'/'))
@@ -278,7 +278,7 @@ pub extern "C" fn ispunct(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn ispunct_l(c: c_int, _loc: locale_t) -> c_int {
     ispunct(c)
 }
@@ -292,7 +292,7 @@ pub extern "C" fn ispunct_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isspace(c: c_int) -> c_int {
     c_int::from(
         c == c_int::from(b' ')
@@ -314,7 +314,7 @@ pub extern "C" fn isspace(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isspace_l(c: c_int, _loc: locale_t) -> c_int {
     isspace(c)
 }
@@ -328,7 +328,7 @@ pub extern "C" fn isspace_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isupper(c: c_int) -> c_int {
     c_int::from(c >= c_int::from(b'A') && c <= c_int::from(b'Z'))
 }
@@ -343,7 +343,7 @@ pub extern "C" fn isupper(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isupper_l(c: c_int, _loc: locale_t) -> c_int {
     isupper(c)
 }
@@ -357,7 +357,7 @@ pub extern "C" fn isupper_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isxdigit(c: c_int) -> c_int {
     c_int::from(isdigit(c) != 0 || (c | 32 >= c_int::from(b'a') && c | 32 <= c_int::from(b'f')))
 }
@@ -372,7 +372,7 @@ pub extern "C" fn isxdigit(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn isxdigit_l(c: c_int, _loc: locale_t) -> c_int {
     isxdigit(c)
 }
@@ -387,7 +387,7 @@ pub extern "C" fn isxdigit_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// Not considered portable for localized applications.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn toascii(c: c_int) -> c_int {
     c & 0x7f
 }
@@ -399,7 +399,7 @@ pub extern "C" fn toascii(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn tolower(c: c_int) -> c_int {
     if isupper(c) != 0 { c | 0x20 } else { c }
 }
@@ -412,7 +412,7 @@ pub extern "C" fn tolower(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn tolower_l(c: c_int, _loc: locale_t) -> c_int {
     tolower(c)
 }
@@ -424,7 +424,7 @@ pub extern "C" fn tolower_l(c: c_int, _loc: locale_t) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn toupper(c: c_int) -> c_int {
     if islower(c) != 0 { c & !0x20 } else { c }
 }
@@ -437,7 +437,7 @@ pub extern "C" fn toupper(c: c_int) -> c_int {
 ///
 /// The list of character classes defined by POSIX is specified here:
 /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap07.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn toupper_l(c: c_int, _loc: locale_t) -> c_int {
     toupper(c)
 }

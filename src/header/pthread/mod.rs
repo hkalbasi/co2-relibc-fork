@@ -97,7 +97,7 @@ pub use self::cond::*;
 pub static mut fork_hooks: [LinkedList<extern "C" fn()>; 3] = [const { LinkedList::new() }; 3];
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_cancel.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_cancel(thread: pthread_t) -> c_int {
     match unsafe { pthread::cancel(&*thread.cast()) } {
         Ok(()) => 0,
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn pthread_cancel(thread: pthread_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_create.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_create(
     pthread: *mut pthread_t,
     attr: *const pthread_attr_t,
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn pthread_create(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_detach.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_detach(pthread: pthread_t) -> c_int {
     match unsafe { pthread::detach(&*pthread.cast()) } {
         Ok(()) => 0,
@@ -134,13 +134,13 @@ pub unsafe extern "C" fn pthread_detach(pthread: pthread_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_equal.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn pthread_equal(pthread1: pthread_t, pthread2: pthread_t) -> c_int {
     core::ptr::eq(pthread1, pthread2).into()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_atfork.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn pthread_atfork(
     prepare: Option<extern "C" fn()>,
     parent: Option<extern "C" fn()>,
@@ -165,21 +165,21 @@ pub extern "C" fn pthread_atfork(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_exit.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_exit(retval: *mut c_void) -> ! {
     unsafe { pthread::exit_current_thread(pthread::Retval(retval)) }
 }
 
 // Not in latest POSIX, mark as depreciated?
 /// See <https://pubs.opengroup.org/onlinepubs/009696799/functions/pthread_getconcurrency.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_getconcurrency() -> c_int {
     // Redox and Linux threads are 1:1, not M:N.
     1
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_getcpuclockid.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_getcpuclockid(
     thread: pthread_t,
     clock_out: *mut clockid_t,
@@ -194,7 +194,7 @@ pub unsafe extern "C" fn pthread_getcpuclockid(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_getschedparam.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_getschedparam(
     thread: pthread_t,
     policy_out: *mut c_int,
@@ -214,7 +214,7 @@ pub mod tls;
 pub use tls::*;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_join.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_join(thread: pthread_t, retval: *mut *mut c_void) -> c_int {
     match unsafe { pthread::join(&*thread.cast()) } {
         Ok(pthread::Retval(ret)) => {
@@ -237,13 +237,13 @@ pub mod rwlock;
 pub use self::rwlock::*;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_self.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_self() -> pthread_t {
     core::ptr::from_ref(unsafe { pthread::current_thread().unwrap_unchecked() }) as *mut _
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setcancelstate.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_setcancelstate(state: c_int, oldstate: *mut c_int) -> c_int {
     match pthread::set_cancel_state(state) {
         Ok(old) => {
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn pthread_setcancelstate(state: c_int, oldstate: *mut c_i
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setcancelstate.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_setcanceltype(ty: c_int, oldty: *mut c_int) -> c_int {
     match pthread::set_cancel_type(ty) {
         Ok(old) => {
@@ -276,14 +276,14 @@ pub unsafe extern "C" fn pthread_setcanceltype(ty: c_int, oldty: *mut c_int) -> 
 
 // Not in latest POSIX, mark as depreciated?
 /// See <https://pubs.opengroup.org/onlinepubs/000095399/functions/pthread_setconcurrency.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn pthread_setconcurrency(concurrency: c_int) -> c_int {
     // Redox and Linux threads are 1:1, not M:N.
     0
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setschedparam.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_setschedparam(
     thread: pthread_t,
     policy: c_int,
@@ -297,7 +297,7 @@ pub unsafe extern "C" fn pthread_setschedparam(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setschedprio.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_setschedprio(thread: pthread_t, prio: c_int) -> c_int {
     e(pthread::set_sched_priority(
         unsafe { &*thread.cast() },
@@ -309,7 +309,7 @@ pub mod spin;
 pub use self::spin::*;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setcancelstate.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_testcancel() {
     unsafe { pthread::testcancel() };
 }
@@ -328,14 +328,14 @@ pub(crate) static CLEANUP_LL_HEAD: Cell<*const CleanupLinkedListEntry> =
 
 // TODO: unwind? setjmp/longjmp?
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __relibc_internal_pthread_cleanup_push(new_entry: *mut c_void) {
     let new_entry = unsafe { &mut *new_entry.cast::<CleanupLinkedListEntry>() };
 
     new_entry.prev = CLEANUP_LL_HEAD.get().cast();
     CLEANUP_LL_HEAD.set(new_entry);
 }
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __relibc_internal_pthread_cleanup_pop(execute: c_int) {
     let prev_head = unsafe { CLEANUP_LL_HEAD.get().read() };
     CLEANUP_LL_HEAD.set(prev_head.prev.cast());

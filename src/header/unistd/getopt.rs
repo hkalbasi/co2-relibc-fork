@@ -11,26 +11,26 @@ use crate::{
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getopt.html>.
 #[allow(non_upper_case_globals)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut optarg: *mut c_char = ptr::null_mut();
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getopt.html>.
 #[allow(non_upper_case_globals)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut opterr: c_int = 1;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getopt.html>.
 #[allow(non_upper_case_globals)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut optind: c_int = 1;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getopt.html>.
 #[allow(non_upper_case_globals)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut optopt: c_int = -1;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getopt.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getopt(
     argc: c_int,
     argv: *const *mut c_char,

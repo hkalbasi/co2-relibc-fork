@@ -30,7 +30,7 @@ static KEYS: Mutex<BTreeMap<pthread_key_t, Dtor>> = Mutex::new(BTreeMap::new());
 static NEXTKEY: AtomicUsize = AtomicUsize::new(1);
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_getspecific.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_getspecific(key: pthread_key_t) -> *mut c_void {
     // According to POSIX (issue 8): Calling [`pthread_getspecific`] with a key
     // that has been deleted with [`pthread_key_delete`] or not obtained from
@@ -46,7 +46,7 @@ pub unsafe extern "C" fn pthread_getspecific(key: pthread_key_t) -> *mut c_void 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_setspecific.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_setspecific(key: pthread_key_t, value: *const c_void) -> c_int {
     if !KEYS.lock().contains_key(&key) {
         // We don't have to return anything, but it's not less expensive to ignore it.
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn pthread_setspecific(key: pthread_key_t, value: *const c
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_key_create.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_key_create(
     key_ptr: *mut pthread_key_t,
     destructor: Dtor,
@@ -84,7 +84,7 @@ pub unsafe extern "C" fn pthread_key_create(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_key_delete.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_key_delete(key: pthread_key_t) -> c_int {
     if KEYS.lock().remove(&key).is_none() {
         // We don't have to return anything, but it's not less expensive to ignore it.

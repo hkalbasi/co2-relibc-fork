@@ -145,7 +145,7 @@ unsafe fn tokenize(mut pattern: *const u8, flags: c_int) -> Tree {
 /// # Safety
 ///
 /// The `input` and `pattern` parameters must be non-null and properly aligned.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[linkage = "weak"] // often redefined in GNU programs
 pub unsafe extern "C" fn fnmatch(
     pattern: *const c_char,

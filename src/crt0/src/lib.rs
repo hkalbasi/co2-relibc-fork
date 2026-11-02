@@ -74,7 +74,7 @@ _start:
 "
 );
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn relibc_crt0(sp: usize) -> ! {
     // This wrapper ensures a dynamic libc.so can access a hidden main function
     //TODO: common definition of types
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn relibc_crt0(sp: usize) -> ! {
 }
 
 #[linkage = "weak"]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn relibc_panic(_pi: &::core::panic::PanicInfo) -> ! {
     loop {}
 }

@@ -19,7 +19,7 @@ use crate::{
 };
 
 /// see getdelim (getline is a special case of getdelim with delim == '\n')
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getline(
     lineptr: *mut *mut c_char,
     n: *mut size_t,
@@ -50,7 +50,7 @@ pub unsafe extern "C" fn getline(
 ///   shall be set, and the function shall return -1 and set errno to indicate
 ///   the error." but in cases that produce EINVAL even glibc doesn't seem to
 ///   set the error indicator, so we also don't.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getdelim(
     lineptr: *mut *mut c_char,
     n: *mut size_t,

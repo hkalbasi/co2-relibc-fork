@@ -8,7 +8,7 @@ use crate::platform::types::{uint16_t, uint32_t, uint64_t};
 ///
 /// Convert a `uint16_t` from big endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn be16toh(x: uint16_t) -> uint16_t {
     uint16_t::from_be(x)
 }
@@ -17,7 +17,7 @@ pub extern "C" fn be16toh(x: uint16_t) -> uint16_t {
 ///
 /// Convert a `uint32_t` from big endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn be32toh(x: uint32_t) -> uint32_t {
     uint32_t::from_be(x)
 }
@@ -26,7 +26,7 @@ pub extern "C" fn be32toh(x: uint32_t) -> uint32_t {
 ///
 /// Convert a `uint64_t` from big endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn be64toh(x: uint64_t) -> uint64_t {
     uint64_t::from_be(x)
 }
@@ -35,7 +35,7 @@ pub extern "C" fn be64toh(x: uint64_t) -> uint64_t {
 ///
 /// Convert a `uint16_t` from host endian representation to big endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htobe16(x: uint16_t) -> uint16_t {
     x.to_be()
 }
@@ -44,7 +44,7 @@ pub extern "C" fn htobe16(x: uint16_t) -> uint16_t {
 ///
 /// Convert a `uint32_t` from host endian representation to big endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htobe32(x: uint32_t) -> uint32_t {
     x.to_be()
 }
@@ -53,7 +53,7 @@ pub extern "C" fn htobe32(x: uint32_t) -> uint32_t {
 ///
 /// Convert a `uint64_t` from host endian representation to big endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htobe64(x: uint64_t) -> uint64_t {
     x.to_be()
 }
@@ -62,7 +62,7 @@ pub extern "C" fn htobe64(x: uint64_t) -> uint64_t {
 ///
 /// Convert a `uint16_t` from host endian representation to little endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htole16(x: uint16_t) -> uint16_t {
     x.to_le()
 }
@@ -71,7 +71,7 @@ pub extern "C" fn htole16(x: uint16_t) -> uint16_t {
 ///
 /// Convert a `uint32_t` from host endian representation to little endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htole32(x: uint32_t) -> uint32_t {
     x.to_le()
 }
@@ -80,7 +80,7 @@ pub extern "C" fn htole32(x: uint32_t) -> uint32_t {
 ///
 /// Convert a `uint64_t` from host endian representation to little endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn htole64(x: uint64_t) -> uint64_t {
     x.to_le()
 }
@@ -89,7 +89,7 @@ pub extern "C" fn htole64(x: uint64_t) -> uint64_t {
 ///
 /// Convert a `uint16_t` from little endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn le16toh(x: uint16_t) -> uint16_t {
     uint16_t::from_le(x)
 }
@@ -98,7 +98,7 @@ pub extern "C" fn le16toh(x: uint16_t) -> uint16_t {
 ///
 /// Convert a `uint32_t` from little endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn le32toh(x: uint32_t) -> uint32_t {
     uint32_t::from_le(x)
 }
@@ -107,7 +107,7 @@ pub extern "C" fn le32toh(x: uint32_t) -> uint32_t {
 ///
 /// Convert a `uint64_t` from little endian representation to host endian
 /// respresentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn le64toh(x: uint64_t) -> uint64_t {
     uint64_t::from_le(x)
 }

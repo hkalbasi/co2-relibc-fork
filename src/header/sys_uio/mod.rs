@@ -21,7 +21,7 @@ pub use crate::header::bits_iovec::{gather, iovec, scatter};
 ///
 /// When successful, returns a non-negative number indicating the number of
 /// bytes actually read. Upon failure, returns `-1`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn readv(fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t {
     if !(0..=IOV_MAX).contains(&iovcnt) {
         platform::ERRNO.set(errno::EINVAL);
@@ -46,7 +46,7 @@ pub unsafe extern "C" fn readv(fd: c_int, iov: *const iovec, iovcnt: c_int) -> s
 /// When successful, returns a non-negative number indicating the number of
 /// bytes actually written to the file associated with `fildes`. Upon failure,
 /// returns `-1`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn writev(fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t {
     if !(0..=IOV_MAX).contains(&iovcnt) {
         platform::ERRNO.set(errno::EINVAL);

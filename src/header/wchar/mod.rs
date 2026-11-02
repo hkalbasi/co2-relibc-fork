@@ -38,7 +38,7 @@ pub use utf8::get_char_encoded_length;
 pub struct mbstate_t;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/btowc.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn btowc(c: c_int) -> wint_t {
     //Check for EOF
     if c == EOF {
@@ -107,14 +107,14 @@ pub unsafe fn fgetwc_unlocked(stream: *mut FILE) -> wint_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fgetwc.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fgetwc(stream: *mut FILE) -> wint_t {
     let mut stream = unsafe { (*stream).lock() };
     unsafe { fgetwc_unlocked(&raw mut *stream) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fgetws.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fgetws(ws: *mut wchar_t, n: c_int, stream: *mut FILE) -> *mut wchar_t {
     let mut i = 0;
     let mut stream = unsafe { (*stream).lock() };
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn fgetws(ws: *mut wchar_t, n: c_int, stream: *mut FILE) -
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fputwc.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fputwc(wc: wchar_t, stream: *mut FILE) -> wint_t {
     //Convert wchar_t to multibytes first
     static mut INTERNAL: mbstate_t = mbstate_t;
@@ -155,7 +155,7 @@ pub unsafe extern "C" fn fputwc(wc: wchar_t, stream: *mut FILE) -> wint_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fputws.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fputws(ws: *const wchar_t, stream: *mut FILE) -> c_int {
     let mut i = 0;
     loop {
@@ -171,13 +171,13 @@ pub unsafe extern "C" fn fputws(ws: *const wchar_t, stream: *mut FILE) -> c_int 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwide.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fwide(stream: *mut FILE, mode: c_int) -> c_int {
     unsafe { (*stream).try_set_orientation(mode) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fwscanf(
     stream: *mut FILE,
     format: *const wchar_t,
@@ -187,26 +187,26 @@ pub unsafe extern "C" fn fwscanf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getwc.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getwc(stream: *mut FILE) -> wint_t {
     unsafe { fgetwc(stream) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getwchar.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getwchar() -> wint_t {
     unsafe { fgetwc(stdin) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbsinit.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbsinit(ps: *const mbstate_t) -> c_int {
     //Add a check for the state maybe
     if ps.is_null() { 1 } else { 0 }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbrlen.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbrlen(s: *const c_char, n: size_t, ps: *mut mbstate_t) -> size_t {
     static mut INTERNAL: mbstate_t = mbstate_t;
     unsafe { mbrtowc(ptr::null_mut(), s, n, &raw mut INTERNAL) }
@@ -215,7 +215,7 @@ pub unsafe extern "C" fn mbrlen(s: *const c_char, n: size_t, ps: *mut mbstate_t)
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbrtowc.html>.
 ///
 /// Only works for UTF8 at the moment.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbrtowc(
     pwc: *mut wchar_t,
     s: *const c_char,
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn mbrtowc(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbsnrtowcs.html>.
 ///
 /// Convert a multibyte string to a wide string with a limited amount of bytes.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbsnrtowcs(
     dst_ptr: *mut wchar_t,
     src_ptr: *mut *const c_char,
@@ -299,7 +299,7 @@ pub unsafe extern "C" fn mbsnrtowcs(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbsrtowcs.html>.
 ///
 /// Convert a multibyte string to a wide string.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbsrtowcs(
     dst: *mut wchar_t,
     src: *mut *const c_char,
@@ -310,19 +310,19 @@ pub unsafe extern "C" fn mbsrtowcs(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/putwc.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putwc(wc: wchar_t, stream: *mut FILE) -> wint_t {
     unsafe { fputwc(wc, &raw mut *stream) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/putwchar.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putwchar(wc: wchar_t) -> wint_t {
     unsafe { fputwc(wc, &raw mut *stdout) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vswscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vswscanf(
     s: *const wchar_t,
     format: *const wchar_t,
@@ -336,7 +336,7 @@ pub unsafe extern "C" fn vswscanf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn swscanf(
     s: *const wchar_t,
     format: *const wchar_t,
@@ -348,7 +348,7 @@ pub unsafe extern "C" fn swscanf(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ungetwc.html>.
 ///
 /// Push wide character `wc` back onto `stream` so it'll be read next
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ungetwc(wc: wint_t, stream: &mut FILE) -> wint_t {
     if wc == WEOF {
         return wc;
@@ -375,7 +375,7 @@ pub unsafe extern "C" fn ungetwc(wc: wint_t, stream: &mut FILE) -> wint_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vfwprintf(
     stream: *mut FILE,
     format: *const wchar_t,
@@ -390,7 +390,7 @@ pub unsafe extern "C" fn vfwprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fwprintf(
     stream: *mut FILE,
     format: *const wchar_t,
@@ -400,19 +400,19 @@ pub unsafe extern "C" fn fwprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vwprintf(format: *const wchar_t, arg: va_list) -> c_int {
     unsafe { vfwprintf(&raw mut *stdout, format, arg) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wprintf(format: *const wchar_t, __valist: ...) -> c_int {
     unsafe { vfwprintf(&raw mut *stdout, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vswprintf(
     s: *mut wchar_t,
     n: size_t,
@@ -426,7 +426,7 @@ pub unsafe extern "C" fn vswprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn swprintf(
     s: *mut wchar_t,
     n: size_t,
@@ -437,13 +437,13 @@ pub unsafe extern "C" fn swprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcpcpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcpcpy(d: *mut wchar_t, s: *const wchar_t) -> *mut wchar_t {
     unsafe { (wcscpy(d, s)).add(wcslen(s)) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcpncpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcpncpy(d: *mut wchar_t, s: *const wchar_t, n: size_t) -> *mut wchar_t {
     unsafe { (wcsncpy(d, s, n)).add(wcsnlen(s, n)) }
 }
@@ -451,7 +451,7 @@ pub unsafe extern "C" fn wcpncpy(d: *mut wchar_t, s: *const wchar_t, n: size_t) 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcrtomb.html>.
 ///
 /// widechar to multibyte.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcrtomb(s: *mut c_char, wc: wchar_t, ps: *mut mbstate_t) -> size_t {
     let mut buffer: [c_char; MB_CUR_MAX as usize] = [0; MB_CUR_MAX as usize];
     let (s_cpy, wc_cpy) = if s.is_null() {
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn wcrtomb(s: *mut c_char, wc: wchar_t, ps: *mut mbstate_t
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsdup.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsdup(s: *const wchar_t) -> *mut wchar_t {
     let l = unsafe { wcslen(s) };
 
@@ -479,7 +479,7 @@ pub unsafe extern "C" fn wcsdup(s: *const wchar_t) -> *mut wchar_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsrtombs.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsrtombs(
     s: *mut c_char,
     ws: *mut *const wchar_t,
@@ -494,7 +494,7 @@ pub unsafe extern "C" fn wcsrtombs(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscat(ws1: *mut wchar_t, ws2: *const wchar_t) -> *mut wchar_t {
     unsafe { wcsncat(ws1, ws2, usize::MAX) }
 }
@@ -505,7 +505,7 @@ pub unsafe extern "C" fn wcscat(ws1: *mut wchar_t, ws2: *const wchar_t) -> *mut 
 /// The caller is required to ensure that `ws` is a valid pointer to a buffer
 /// containing at least one nul value. The pointed-to buffer must not be
 /// modified for the duration of the call.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcschr(ws: *const wchar_t, wc: wchar_t) -> *mut wchar_t {
     // We iterate over non-mut references and thus need to coerce the
     // resulting reference via a *const pointer before we can get our *mut.
@@ -520,20 +520,20 @@ pub unsafe extern "C" fn wcschr(ws: *const wchar_t, wc: wchar_t) -> *mut wchar_t
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscmp(ws1: *const wchar_t, ws2: *const wchar_t) -> c_int {
     unsafe { wcsncmp(ws1, ws2, usize::MAX) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscoll.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscoll(ws1: *const wchar_t, ws2: *const wchar_t) -> c_int {
     //TODO: locale comparison
     unsafe { wcscmp(ws1, ws2) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscpy(ws1: *mut wchar_t, ws2: *const wchar_t) -> *mut wchar_t {
     let mut i = 0;
     loop {
@@ -556,13 +556,13 @@ unsafe fn inner_wcsspn(mut wcs: *const wchar_t, set: *const wchar_t, reject: boo
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscspn.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscspn(wcs: *const wchar_t, set: *const wchar_t) -> size_t {
     unsafe { inner_wcsspn(wcs, set, true) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsftime.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn wcsftime(
     wcs: *mut wchar_t,
     maxsize: size_t,
@@ -580,7 +580,7 @@ pub unsafe extern "C" fn wcslen(ws: *const wchar_t) -> size_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsncat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsncat(
     ws1: *mut wchar_t,
     ws2: *const wchar_t,
@@ -602,7 +602,7 @@ pub unsafe extern "C" fn wcsncat(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsncmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsncmp(ws1: *const wchar_t, ws2: *const wchar_t, n: size_t) -> c_int {
     for i in 0..n {
         let wc1 = unsafe { *ws1.add(i) };
@@ -617,7 +617,7 @@ pub unsafe extern "C" fn wcsncmp(ws1: *const wchar_t, ws2: *const wchar_t, n: si
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsncpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsncpy(
     ws1: *mut wchar_t,
     ws2: *const wchar_t,
@@ -640,7 +640,7 @@ pub unsafe extern "C" fn wcsncpy(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsnlen.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsnlen(mut s: *const wchar_t, maxlen: size_t) -> size_t {
     let mut len = 0;
 
@@ -657,7 +657,7 @@ pub unsafe extern "C" fn wcsnlen(mut s: *const wchar_t, maxlen: size_t) -> size_
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsnrtombs.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsnrtombs(
     mut dest: *mut c_char,
     src: *mut *const wchar_t,
@@ -706,7 +706,7 @@ pub unsafe extern "C" fn wcsnrtombs(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcspbrk.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcspbrk(mut wcs: *const wchar_t, set: *const wchar_t) -> *mut wchar_t {
     wcs = unsafe { wcs.add(wcscspn(wcs, set)) };
     if unsafe { *wcs } == 0 {
@@ -719,7 +719,7 @@ pub unsafe extern "C" fn wcspbrk(mut wcs: *const wchar_t, set: *const wchar_t) -
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsrchr.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsrchr(ws1: *const wchar_t, wc: wchar_t) -> *mut wchar_t {
     let mut last_matching_wc = ptr::null::<wchar_t>();
     let mut i = 0;
@@ -735,13 +735,13 @@ pub unsafe extern "C" fn wcsrchr(ws1: *const wchar_t, wc: wchar_t) -> *mut wchar
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsspn.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsspn(wcs: *const wchar_t, set: *const wchar_t) -> size_t {
     unsafe { inner_wcsspn(wcs, set, false) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsstr.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsstr(ws1: *const wchar_t, ws2: *const wchar_t) -> *mut wchar_t {
     // Get length of ws2, not including null terminator
     let ws2_len = unsafe { wcslen(ws2) };
@@ -770,7 +770,7 @@ pub unsafe extern "C" fn wcsstr(ws1: *const wchar_t, ws2: *const wchar_t) -> *mu
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcstod.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstod(mut ptr: *const wchar_t, end: *mut *mut wchar_t) -> c_double {
     const RADIX: u32 = 10;
 
@@ -812,7 +812,7 @@ pub unsafe extern "C" fn wcstod(mut ptr: *const wchar_t, end: *mut *mut wchar_t)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcstok.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstok(
     mut wcs: *mut wchar_t,
     delim: *const wchar_t,
@@ -854,7 +854,7 @@ pub unsafe extern "C" fn wcstok(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstol(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,
@@ -876,7 +876,7 @@ pub unsafe extern "C" fn wcstol(
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
 #[expect(clippy::cast_lossless)] // not all users of `wcsto_impl!` are lossless
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstoll(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,
@@ -897,7 +897,7 @@ pub unsafe extern "C" fn wcstoll(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstoul(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,
@@ -918,7 +918,7 @@ pub unsafe extern "C" fn wcstoul(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcstoull(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,
@@ -937,13 +937,13 @@ pub unsafe extern "C" fn wcstoull(
 /// Marked legacy in issue 6.
 /// Encouraged to use `wcsstr` instead, which this implementation simply forwards to.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcswcs(ws1: *const wchar_t, ws2: *const wchar_t) -> *mut wchar_t {
     unsafe { wcsstr(ws1, ws2) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcswidth.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcswidth(pwcs: *const wchar_t, n: size_t) -> c_int {
     let mut total_width = 0;
     for i in 0..n {
@@ -957,20 +957,20 @@ pub unsafe extern "C" fn wcswidth(pwcs: *const wchar_t, n: size_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsxfrm.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn wcsxfrm(ws1: *mut wchar_t, ws2: *const wchar_t, n: size_t) -> size_t {
     todo_skip!(0, "wcsxfrm is not implemented");
     0
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wctob.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn wctob(c: wint_t) -> c_int {
     if c <= 0x7F { c as c_int } else { EOF }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcwidth.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn wcwidth(wc: wchar_t) -> c_int {
     match char::from_u32(wc as u32) {
         Some(c) => match unicode_width::UnicodeWidthChar::width(c) {
@@ -982,7 +982,7 @@ pub extern "C" fn wcwidth(wc: wchar_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wmemchr.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wmemchr(ws: *const wchar_t, wc: wchar_t, n: size_t) -> *mut wchar_t {
     for i in 0..n {
         if unsafe { *ws.add(i) } == wc {
@@ -993,7 +993,7 @@ pub unsafe extern "C" fn wmemchr(ws: *const wchar_t, wc: wchar_t, n: size_t) -> 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wmemcmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wmemcmp(ws1: *const wchar_t, ws2: *const wchar_t, n: size_t) -> c_int {
     for i in 0..n {
         let wc1 = unsafe { *ws1.add(i) };
@@ -1006,7 +1006,7 @@ pub unsafe extern "C" fn wmemcmp(ws1: *const wchar_t, ws2: *const wchar_t, n: si
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wmemcpy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wmemcpy(
     ws1: *mut wchar_t,
     ws2: *const wchar_t,
@@ -1023,7 +1023,7 @@ pub unsafe extern "C" fn wmemcpy(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wmemmove.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wmemmove(
     ws1: *mut wchar_t,
     ws2: *const wchar_t,
@@ -1040,7 +1040,7 @@ pub unsafe extern "C" fn wmemmove(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wmemset.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wmemset(ws: *mut wchar_t, wc: wchar_t, n: size_t) -> *mut wchar_t {
     for i in 0..n {
         unsafe { *ws.add(i) = wc };
@@ -1049,7 +1049,7 @@ pub unsafe extern "C" fn wmemset(ws: *mut wchar_t, wc: wchar_t, n: size_t) -> *m
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfwscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vfwscanf(
     stream: *mut FILE,
     format: *const wchar_t,
@@ -1070,19 +1070,19 @@ pub unsafe extern "C" fn vfwscanf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vwscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vwscanf(format: *const wchar_t, __valist: va_list) -> c_int {
     unsafe { vfwscanf(stdin, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wscanf(format: *const wchar_t, __valist: ...) -> c_int {
     unsafe { vfwscanf(stdin, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcscasecmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcscasecmp(mut s1: *const wchar_t, mut s2: *const wchar_t) -> c_int {
     unsafe {
         while *s1 != 0 && *s2 != 0 {
@@ -1098,7 +1098,7 @@ pub unsafe extern "C" fn wcscasecmp(mut s1: *const wchar_t, mut s2: *const wchar
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcsncasecmp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn wcsncasecmp(
     mut s1: *const wchar_t,
     mut s2: *const wchar_t,

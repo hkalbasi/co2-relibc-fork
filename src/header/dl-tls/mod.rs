@@ -19,7 +19,7 @@ pub struct dl_tls_index {
     pub ti_offset: usize,
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __tls_get_addr(ti: *mut dl_tls_index) -> *mut c_void {
     let tcb = unsafe { Tcb::current().unwrap() };
     let ti = unsafe { &*ti };

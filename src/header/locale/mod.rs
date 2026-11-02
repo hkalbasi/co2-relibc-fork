@@ -34,7 +34,7 @@ static mut GLOBAL_LOCALE: *mut GlobalLocaleData = ptr::null_mut();
 pub(crate) static mut THREAD_LOCALE: *mut LocaleData = ptr::null_mut();
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/localeconv.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn localeconv() -> *mut lconv {
     let current = unsafe { uselocale(ptr::null_mut()) };
     if current == LC_GLOBAL_LOCALE || current.is_null() {
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn localeconv() -> *mut lconv {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/setlocale.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setlocale(category: c_int, locale: *const c_char) -> *mut c_char {
     if unsafe { GLOBAL_LOCALE.is_null() } {
         let new_global = GlobalLocaleData::new();
@@ -90,7 +90,7 @@ pub unsafe extern "C" fn setlocale(category: c_int, locale: *const c_char) -> *m
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/uselocale.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn uselocale(newloc: locale_t) -> locale_t {
     let old_loc = if unsafe { THREAD_LOCALE.is_null() } {
         LC_GLOBAL_LOCALE
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn uselocale(newloc: locale_t) -> locale_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/newlocale.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn newlocale(mask: c_int, locale: *const c_char, base: locale_t) -> locale_t {
     let name = unsafe { CStr::from_ptr(locale) }
         .to_string_lossy()
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn newlocale(mask: c_int, locale: *const c_char, base: loc
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/freelocale.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn freelocale(loc: locale_t) {
     if !loc.is_null() && loc != LC_GLOBAL_LOCALE {
         drop(unsafe { Box::from_raw(loc.cast::<LocaleData>()) });
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn freelocale(loc: locale_t) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/duplocale.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn duplocale(loc: locale_t) -> locale_t {
     if loc.is_null() {
         // TODO: errno?

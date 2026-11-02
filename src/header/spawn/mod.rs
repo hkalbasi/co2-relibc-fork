@@ -46,7 +46,7 @@ use crate::{
 /// `path` and the elements in `argv` must be a pointers to valid
 /// null-terminated character arrays. Failure to ensure any of this will result
 /// in undefined behaviour.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn(
     pid: *mut pid_t,
     path: *const c_char,
@@ -101,7 +101,7 @@ pub unsafe extern "C" fn posix_spawn(
 /// `file` and the elements in `argv` must be a pointers to valid
 /// null-terminated character arrays. Failure to ensure any of this will result
 /// in undefined behaviour.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawnp(
     pid: *mut pid_t,
     file: *const c_char,

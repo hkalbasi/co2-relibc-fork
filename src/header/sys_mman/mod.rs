@@ -53,7 +53,7 @@ pub const POSIX_MADV_WILLNEED: c_int = 3;
 pub const POSIX_MADV_WONTNEED: c_int = 4;
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man2/madvise.2.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn madvise(addr: *mut c_void, len: size_t, flags: c_int) -> c_int {
     unsafe { Sys::madvise(addr, len, flags) }
         .map(|()| 0)
@@ -61,7 +61,7 @@ pub unsafe extern "C" fn madvise(addr: *mut c_void, len: size_t, flags: c_int) -
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mlock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mlock(addr: *const c_void, len: size_t) -> c_int {
     unsafe { Sys::mlock(addr, len) }
         .map(|()| 0)
@@ -69,7 +69,7 @@ pub unsafe extern "C" fn mlock(addr: *const c_void, len: size_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mlockall.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mlockall(flags: c_int) -> c_int {
     unsafe { Sys::mlockall(flags) }
         .map(|()| 0)
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn mlockall(flags: c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mmap.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mmap(
     addr: *mut c_void,
     len: size_t,
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn mmap(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mprotect.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mprotect(addr: *mut c_void, len: size_t, prot: c_int) -> c_int {
     unsafe { Sys::mprotect(addr, len, prot) }
         .map(|()| 0)
@@ -104,7 +104,7 @@ pub unsafe extern "C" fn mprotect(addr: *mut c_void, len: size_t, prot: c_int) -
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man2/mremap.2.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mremap(
     old_address: *mut c_void,
     old_size: size_t,
@@ -123,7 +123,7 @@ pub unsafe extern "C" fn mremap(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/msync.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn msync(addr: *mut c_void, len: size_t, flags: c_int) -> c_int {
     unsafe { Sys::msync(addr, len, flags) }
         .map(|()| 0)
@@ -131,7 +131,7 @@ pub unsafe extern "C" fn msync(addr: *mut c_void, len: size_t, flags: c_int) -> 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mlock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn munlock(addr: *const c_void, len: size_t) -> c_int {
     unsafe { Sys::munlock(addr, len) }
         .map(|()| 0)
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn munlock(addr: *const c_void, len: size_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mlockall.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn munlockall() -> c_int {
     unsafe { Sys::munlockall() }
         .map(|()| 0)
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn munlockall() -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/munmap.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn munmap(addr: *mut c_void, len: size_t) -> c_int {
     unsafe { Sys::munmap(addr, len) }
         .map(|()| 0)
@@ -181,14 +181,14 @@ unsafe fn shm_path(name: *const c_char) -> CString {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shm_open.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn shm_open(name: *const c_char, oflag: c_int, mode: mode_t) -> c_int {
     let path = unsafe { shm_path(name) };
     unsafe { fcntl::open(path.as_ptr(), oflag, mode) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shm_unlink.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn shm_unlink(name: *const c_char) -> c_int {
     let path = unsafe { shm_path(name) };
     unsafe { unistd::unlink(path.as_ptr()) }

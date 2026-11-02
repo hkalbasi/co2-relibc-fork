@@ -45,7 +45,7 @@ use crate::{
 ///   not `inet_pton()`) are often used maliciously to confuse or mislead
 ///   users (e.g, for phishing).
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_addr(cp: *const c_char) -> in_addr_t {
     let mut val: in_addr = in_addr { s_addr: 0 };
 
@@ -61,7 +61,7 @@ pub unsafe extern "C" fn inet_addr(cp: *const c_char) -> in_addr_t {
 /// Converts the Internet host address `cp` from the IPv4 numbers-and-dots
 /// notation into binary form (in network byte order) and stores it in the
 /// structure that `inp` points to.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_aton(cp: *const c_char, inp: *mut in_addr) -> c_int {
     let cp_cstr = unsafe { CStr::from_ptr(cp) };
     let parts = unsafe { str::from_utf8_unchecked(cp_cstr.to_bytes()).split('.') };
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn inet_aton(cp: *const c_char, inp: *mut in_addr) -> c_in
 /// The `inet_lnaof()` function was specified in Networking Services Issue 5,
 /// but not in the Open Group Base Specifications Issue 6 and later.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn inet_lnaof(r#in: in_addr) -> in_addr_t {
     if r#in.s_addr >> 24 < 128 {
         r#in.s_addr & 0xff_ffff
@@ -143,7 +143,7 @@ pub extern "C" fn inet_lnaof(r#in: in_addr) -> in_addr_t {
 /// The `inet_makeaddr()` function was specified in Networking Services Issue
 /// 5, but not in the Open Group Base Specifications Issue 6 and later.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn inet_makeaddr(net: in_addr_t, lna: in_addr_t) -> in_addr {
     let mut output: in_addr = in_addr { s_addr: 0 };
 
@@ -167,7 +167,7 @@ pub extern "C" fn inet_makeaddr(net: in_addr_t, lna: in_addr_t) -> in_addr {
 /// The `inet_netof()` function was specified in Networking Services Issue 5,
 /// but not in the Open Group Base Specifications Issue 6 and later.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn inet_netof(r#in: in_addr) -> in_addr_t {
     if r#in.s_addr >> 24 < 128 {
         r#in.s_addr & 0xff_ffff
@@ -188,7 +188,7 @@ pub extern "C" fn inet_netof(r#in: in_addr) -> in_addr_t {
 /// The `inet_network()` function was specified in Networking Services Issue 5,
 /// but not in the Open Group Base Specifications Issue 6 and later.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_network(cp: *const c_char) -> in_addr_t {
     ntohl(unsafe {
         #[allow(deprecated)]
@@ -208,7 +208,7 @@ pub unsafe extern "C" fn inet_network(cp: *const c_char) -> in_addr_t {
 /// Applications should prefer `inet_ntop()` over `inet_ntoa()` as it supports
 /// multiple address families and is thread-safe.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_ntoa(r#in: in_addr) -> *mut c_char {
     static NTOA_ADDR: RawCell<[c_char; 16]> = RawCell::new([0; 16]);
 
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn inet_ntoa(r#in: in_addr) -> *mut c_char {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/inet_ntop.html>.
 ///
 /// Converts a numeric address into a text string suitable for presentation.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_ntop(
     af: c_int,
     src: *const c_void,
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn inet_ntop(
 ///
 /// Converts an address in its standard text presentation form into its
 /// numeric binary form.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn inet_pton(af: c_int, src: *const c_char, dst: *mut c_void) -> c_int {
     if af == AF_INET {
         let s_addr = unsafe {

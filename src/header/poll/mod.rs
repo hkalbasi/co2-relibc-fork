@@ -185,7 +185,7 @@ pub unsafe fn poll_epoll(fds: &mut [pollfd], timeout: c_int, sigmask: *const sig
 /// - `poll` should behave equivalent to `ppoll` with a null pointer for `sigmask`.
 ///
 /// Note: Uses epoll internally.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn poll(fds: *mut pollfd, nfds: nfds_t, timeout: c_int) -> c_int {
     trace_expr!(
         unsafe {
@@ -211,7 +211,7 @@ pub unsafe extern "C" fn poll(fds: *mut pollfd, nfds: nfds_t, timeout: c_int) ->
 /// - Passing a null pointer for timeout is equivalent to `-1` for `timeout` to `poll`.
 ///
 /// Note: Uses epoll internally.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ppoll(
     fds: *mut pollfd,
     nfds: nfds_t,

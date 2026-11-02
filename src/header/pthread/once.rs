@@ -26,7 +26,7 @@ use crate::{header::pthread::pthread_once_t, platform::types::c_int};
 ///   `siglongjmp()`.
 /// - If `once_control` has automatic storage duration or is not initialized by
 ///   `PTHREAD_ONCE_INIT`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_once(
     once_control: *mut pthread_once_t,
     init_routine: extern "C" fn(),

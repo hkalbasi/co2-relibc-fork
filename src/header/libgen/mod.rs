@@ -10,7 +10,7 @@ use crate::{casting::ByteLiteral, header::string::strlen, platform::types::c_cha
 /// component of the pathname, deleting any trailing `/` characters.
 ///
 /// Always successful. The return value never represents an error.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn basename(path: *mut c_char) -> *mut c_char {
     if path.is_null() || unsafe { strlen(path) == 0 } {
         return c".".as_ptr().cast_mut();
@@ -39,7 +39,7 @@ pub unsafe extern "C" fn basename(path: *mut c_char) -> *mut c_char {
 /// entry of the final pathname component.
 ///
 /// Always successful. The return value never represents an error.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn dirname(path: *mut c_char) -> *mut c_char {
     if path.is_null() || unsafe { strlen(path) == 0 } {
         return c".".as_ptr().cast_mut();

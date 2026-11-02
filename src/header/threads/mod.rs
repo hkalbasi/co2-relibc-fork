@@ -48,7 +48,7 @@ pub const mtx_timed: c_int = 2;
 pub const TSS_DTOR_ITERATIONS: c_long = PTHREAD_DESTRUCTOR_ITERATIONS;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/call_once.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn call_once(flag: *mut once_flag, func: extern "C" fn()) {
     unsafe {
         pthread::pthread_once(flag, func);
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn call_once(flag: *mut once_flag, func: extern "C" fn()) 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_broadcast.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_broadcast(cnd: *mut cnd_t) -> c_int {
     if unsafe { pthread_cond_broadcast(cnd.cast::<pthread_cond_t>()) } == 0 {
         thrd_success
@@ -66,13 +66,13 @@ pub unsafe extern "C" fn cnd_broadcast(cnd: *mut cnd_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_destroy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_destroy(cnd: *mut cnd_t) {
     unsafe { pthread_cond_destroy(cnd.cast::<pthread_cond_t>()) };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_init.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_init(cnd: *mut cnd_t) -> c_int {
     unsafe {
         cnd.cast::<RlctCond>().write(RlctCond::new());
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn cnd_init(cnd: *mut cnd_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_signal.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_signal(cnd: *mut cnd_t) -> c_int {
     if unsafe { pthread_cond_signal(cnd.cast::<pthread_cond_t>()) } == 0 {
         thrd_success
@@ -91,7 +91,7 @@ pub unsafe extern "C" fn cnd_signal(cnd: *mut cnd_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_timedwait.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_timedwait(
     cnd: *mut cnd_t,
     mtx: *mut mtx_t,
@@ -114,7 +114,7 @@ pub unsafe extern "C" fn cnd_timedwait(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/cnd_wait.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn cnd_wait(cnd: *mut cnd_t, mtx: *mut mtx_t) -> c_int {
     if unsafe { pthread_cond_wait(cnd.cast::<pthread_cond_t>(), mtx.cast::<pthread_mutex_t>()) }
         == 0
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn cnd_wait(cnd: *mut cnd_t, mtx: *mut mtx_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_destroy.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_destroy(mtx: *mut mtx_t) {
     unsafe {
         pthread_mutex_destroy(mtx.cast::<pthread_mutex_t>());
@@ -134,7 +134,7 @@ pub unsafe extern "C" fn mtx_destroy(mtx: *mut mtx_t) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_init.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_init(mtx: *mut mtx_t, ty: c_int) -> c_int {
     let mut attr = MaybeUninit::<pthread_mutexattr_t>::uninit();
     unsafe {
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn mtx_init(mtx: *mut mtx_t, ty: c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_lock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_lock(mtx: *mut mtx_t) -> c_int {
     if unsafe { pthread_mutex_lock(mtx.cast::<pthread_mutex_t>()) } == 0 {
         thrd_success
@@ -170,7 +170,7 @@ pub unsafe extern "C" fn mtx_lock(mtx: *mut mtx_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_timedlock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_timedlock(mtx: *mut mtx_t, timeout: &timespec) -> c_int {
     ERRNO.set(0);
     let ret = unsafe { pthread_mutex_timedlock(mtx.cast::<pthread_mutex_t>(), timeout) };
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn mtx_timedlock(mtx: *mut mtx_t, timeout: &timespec) -> c
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_trylock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_trylock(mtx: *mut mtx_t) -> c_int {
     ERRNO.set(0);
     let ret = unsafe { pthread_mutex_trylock(mtx.cast::<pthread_mutex_t>()) };
@@ -196,7 +196,7 @@ pub unsafe extern "C" fn mtx_trylock(mtx: *mut mtx_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mtx_unlock.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn mtx_unlock(mtx: *mut mtx_t) -> c_int {
     if unsafe { pthread_mutex_unlock(mtx.cast::<pthread_mutex_t>()) } == 0 {
         thrd_success
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn mtx_unlock(mtx: *mut mtx_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_create.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_create(
     thrd: *mut thrd_t,
     start: thrd_start_t,
@@ -231,13 +231,13 @@ pub unsafe extern "C" fn thrd_create(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_current.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_current() -> thrd_t {
     unsafe { pthread_self() }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_detach.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_detach(thrd: thrd_t) -> c_int {
     if unsafe { pthread_detach(thrd) } == 0 {
         thrd_success
@@ -247,19 +247,19 @@ pub unsafe extern "C" fn thrd_detach(thrd: thrd_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_equal.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn thrd_equal(thrd1: thrd_t, thrd2: thrd_t) -> c_int {
     pthread_equal(thrd1, thrd2)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_exit.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_exit(ret: c_int) -> ! {
     unsafe { pthread_exit(ret as *mut c_void) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_join.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_join(thrd: thrd_t, retval: *mut c_int) -> c_int {
     if unsafe { pthread_join(thrd, retval.cast::<*mut c_void>()) } == 0 {
         thrd_success
@@ -269,7 +269,7 @@ pub unsafe extern "C" fn thrd_join(thrd: thrd_t, retval: *mut c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_sleep.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_sleep(time1: &timespec, time2: *mut timespec) -> c_int {
     ERRNO.set(0);
     let ret = clock_nanosleep(CLOCK_REALTIME, 0, time1, time2);
@@ -282,13 +282,13 @@ pub unsafe extern "C" fn thrd_sleep(time1: &timespec, time2: *mut timespec) -> c
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/thrd_yield.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn thrd_yield() {
     sched_yield();
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tss_create.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tss_create(tss: *mut tss_t, dtor: tss_dtor_t) -> c_int {
     if unsafe { pthread_key_create(tss.cast::<pthread_key_t>(), dtor) } == 0 {
         thrd_success
@@ -298,7 +298,7 @@ pub unsafe extern "C" fn tss_create(tss: *mut tss_t, dtor: tss_dtor_t) -> c_int 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tss_delete.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tss_delete(tss: tss_t) {
     // note: tss_t is a transparent type alias to pthread_key_t
     unsafe {
@@ -307,14 +307,14 @@ pub unsafe extern "C" fn tss_delete(tss: tss_t) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tss_get.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tss_get(tss: tss_t) -> *mut c_void {
     // note: tss_t is a transparent type alias to pthread_key_t
     unsafe { pthread_getspecific(tss) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tss_set.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tss_set(tss: tss_t, value: *mut c_void) -> c_int {
     // note: tss_t is a transparent type alias to pthread_key_t
     if unsafe { pthread_setspecific(tss, value) } == 0 {

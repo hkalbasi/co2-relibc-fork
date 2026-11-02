@@ -17,7 +17,7 @@ static mut BRK: *mut c_void = ptr::null_mut();
 /// The `brk()` function was marked legacy in the System Interface & Headers
 /// Issue 5, and removed in Issue 6.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn brk(addr: *mut c_void) -> c_int {
     unsafe { BRK = Sys::brk(addr).or_errno_null_mut() };
 
@@ -35,7 +35,7 @@ pub unsafe extern "C" fn brk(addr: *mut c_void) -> c_int {
 /// The `sbrk()` function was marked legacy in the System Interface & Headers
 /// Issue 5, and removed in Issue 6.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn sbrk(incr: intptr_t) -> *mut c_void {
     if unsafe { BRK }.is_null() {
         unsafe { BRK = Sys::brk(ptr::null_mut()).or_errno_null_mut() };

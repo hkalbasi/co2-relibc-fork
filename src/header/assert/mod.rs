@@ -18,7 +18,7 @@ use crate::{
 ///
 /// # Safety
 /// `func`, `file` and `cond` are guaranteed to be non-empty and valid.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __assert_fail(
     func: *const c_char,
     file: *const c_char,

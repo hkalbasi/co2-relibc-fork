@@ -55,7 +55,7 @@ pub struct ipc_perm {
 ///
 /// Upon success, returns a key. Upon failure, returns `(key_t)-1` and sets
 /// errno to indicate the error.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ftok(path: *const c_char, id: c_int) -> key_t {
     let path = unsafe { CStr::from_ptr(path) };
     let mut stat = stat::default();

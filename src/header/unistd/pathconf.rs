@@ -100,7 +100,7 @@ fn pc(name: c_int) -> c_long {
 ///
 /// # Implementation
 /// `_fildes` is ignored.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn fpathconf(_fildes: c_int, name: c_int) -> c_long {
     pc(name)
 }
@@ -115,7 +115,7 @@ pub extern "C" fn fpathconf(_fildes: c_int, name: c_int) -> c_long {
 ///
 /// # Implementation
 /// `_path` is ignored.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn pathconf(_path: *const c_char, name: c_int) -> c_long {
     pc(name)
 }

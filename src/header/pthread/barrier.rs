@@ -40,7 +40,7 @@ impl Default for RlctBarrierAttr {
 ///   `pthread_barrier_init()`.
 /// - This function is called with an uninitialized `barrier`.
 /// - This function is called when any thread is blocked on `barrier`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrier_destroy(barrier: *mut pthread_barrier_t) -> c_int {
     // No-op, currently.
     unsafe { core::ptr::drop_in_place(barrier.cast::<RlctBarrier>()) };
@@ -63,7 +63,7 @@ pub unsafe extern "C" fn pthread_barrier_destroy(barrier: *mut pthread_barrier_t
 /// - Use of `barrier` before this function is called.
 /// - This function is called with an already initialized `barrier`.
 /// - This function is called when any thread is blocked on `barrier`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrier_init(
     barrier: *mut pthread_barrier_t,
     attr: *const pthread_barrierattr_t,
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn pthread_barrier_init(
 ///
 /// # Safety
 /// Undefined behaviour will occur if `barrier` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrier_wait(barrier: *mut pthread_barrier_t) -> c_int {
     let barrier = unsafe { &*barrier.cast::<RlctBarrier>() };
 
@@ -116,7 +116,7 @@ pub unsafe extern "C" fn pthread_barrier_wait(barrier: *mut pthread_barrier_t) -
 ///
 /// # Safety
 /// Undefined behaviour will occur if `attr` is already initialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrierattr_init(attr: *mut pthread_barrierattr_t) -> c_int {
     unsafe { core::ptr::write(attr.cast::<RlctBarrierAttr>(), RlctBarrierAttr::default()) };
 
@@ -135,7 +135,7 @@ pub unsafe extern "C" fn pthread_barrierattr_init(attr: *mut pthread_barrierattr
 ///
 /// # Safety
 /// Undefined behaviour will occur if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrierattr_setpshared(
     attr: *mut pthread_barrierattr_t,
     pshared: c_int,
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn pthread_barrierattr_setpshared(
 ///
 /// # Safety
 /// Undefined behaviour will occur if `attr` is uninitialized.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrierattr_getpshared(
     attr: *const pthread_barrierattr_t,
     pshared: *mut c_int,
@@ -181,7 +181,7 @@ pub unsafe extern "C" fn pthread_barrierattr_getpshared(
 /// # Safety
 /// Undefined behaviour will occur if `attr` is uninitialized or if `attr` is
 /// used after calling this function.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pthread_barrierattr_destroy(attr: *mut pthread_barrierattr_t) -> c_int {
     unsafe { core::ptr::drop_in_place(attr) };
     0

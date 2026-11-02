@@ -83,7 +83,7 @@ impl IntoIterator for &posix_spawn_file_actions_t {
 ///
 /// # Panics
 /// Panics if `file_actions` is `NULL`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn posix_spawn_file_actions_init(
     file_actions: *mut posix_spawn_file_actions_t,
 ) -> c_int {
@@ -112,7 +112,7 @@ pub extern "C" fn posix_spawn_file_actions_init(
 /// If `file_actions` is not `NULL`, then it must be a pointer to a
 /// `file_actions` object that was initialised by calling
 /// `posix_spawn_file_actions_init()`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_destroy(
     file_actions: *mut posix_spawn_file_actions_t,
 ) -> c_int {
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn posix_spawn_file_actions_destroy(
 ///
 /// # Safety
 /// `path` must be a valid null-terminated C string.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_addopen(
     file_actions: *mut posix_spawn_file_actions_t,
     fildes: c_int,
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn posix_spawn_file_actions_addopen(
 ///
 /// # Safety
 /// `file_actions` must be initialised.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_addclose(
     file_actions: *mut posix_spawn_file_actions_t,
     fildes: c_int,
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn posix_spawn_file_actions_addclose(
 /// # Safety
 /// `file_actions` must be initialised and `path` must be a valid
 /// null-terminated C string.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_addchdir(
     file_actions: *mut posix_spawn_file_actions_t,
     path: *const c_char,
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn posix_spawn_file_actions_addchdir(
 ///
 /// # Safety
 /// `file_actions` must be initialised.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_addfchdir(
     file_actions: *mut posix_spawn_file_actions_t,
     fildes: c_int,
@@ -257,7 +257,7 @@ pub unsafe extern "C" fn posix_spawn_file_actions_addfchdir(
 ///
 /// # Safety
 /// `file_actions` must be initialised.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn posix_spawn_file_actions_adddup2(
     file_actions: *mut posix_spawn_file_actions_t,
     fildes: c_int,

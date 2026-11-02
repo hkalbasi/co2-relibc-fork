@@ -43,7 +43,7 @@ pub struct ifaddrs {
 }
 
 /// Frees the dynamically allocated memory used by `ifa`.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn freeifaddrs(mut ifa: *mut ifaddrs) {
     while !ifa.is_null() {
         let next = unsafe { (*ifa).ifa_next };
@@ -58,7 +58,7 @@ pub unsafe extern "C" fn freeifaddrs(mut ifa: *mut ifaddrs) {
 ///
 /// The data returned by `getifaddrs()` is dynamically allocated and should
 /// be freed using `freeifaddrs()` when no longer needed.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getifaddrs(ifap: *mut *mut ifaddrs) -> c_int {
     //TODO: implement getifaddrs
     platform::ERRNO.set(errno::ENOSYS);

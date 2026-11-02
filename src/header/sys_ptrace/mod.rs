@@ -65,7 +65,7 @@ pub const PTRACE_SYSEMU_SINGLESTEP: c_int = 32;
 /// - *data
 ///
 /// Currently only implemented on x86_64.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ptrace(request: c_int, mut __valist: ...) -> c_int {
     // Musl also just grabs the arguments from the varargs...
     unsafe {

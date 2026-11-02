@@ -58,7 +58,7 @@ pub struct glob_t {
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/glob.html>.
 #[linkage = "weak"] // GNU prefers its own glob e.g. in Make
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn glob(
     pattern: *const c_char,
     flags: c_int,
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn glob(
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/glob.html>.
 #[linkage = "weak"] // GNU prefers its own glob e.g. in Make
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn globfree(pglob: *mut glob_t) {
     // Retake ownership
     if unsafe { !(*pglob).__opaque.is_null() } {

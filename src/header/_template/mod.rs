@@ -3,7 +3,7 @@
 use platform::types::*;
 
 /*
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn func(args) -> c_int {
     unimplemented!();
 }

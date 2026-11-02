@@ -61,7 +61,7 @@ fn getpass_rs(prompt: CStr, passbuff: &mut [u8]) -> Result<*mut c_char, io::Erro
 /// The `getpass()` function was marked legacy in the Open Group System
 /// Interface & Headers Issue 5, and removed in Issue 6.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getpass(prompt: *const c_char) -> *mut c_char {
     static PASSBUFF: RawCell<[u8; PASS_MAX]> = RawCell::new([0; PASS_MAX]);
 

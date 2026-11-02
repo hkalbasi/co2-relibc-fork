@@ -293,7 +293,7 @@ impl<'a> Drop for LockGuard<'a> {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/clearerr.html>.
 ///
 /// Clears EOF and ERR indicators on a stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn clearerr(stream: *mut FILE) {
     let mut stream = unsafe { (*stream).lock() };
     stream.flags &= !(F_EOF | F_ERR);
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn clearerr(stream: *mut FILE) {
 ///   overwritten by a subsequent call to `ctermid()`.
 /// - The returned pointer might be invalidated if the calling thread is
 ///   terminated.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ctermid(s: *mut c_char) -> *mut c_char {
     static mut TERMID: [u8; L_ctermid] = *b"/dev/tty\0";
 
@@ -371,7 +371,7 @@ pub unsafe extern "C" fn cuserid(s: *mut c_char) -> *mut c_char {
 /// This function does not guarentee that the file buffer will be flushed or that the file
 /// descriptor will be closed, so if it is important that the file be written to, use `fflush()`
 /// prior to using this function.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fclose(stream: *mut FILE) -> c_int {
     let stream = unsafe { &mut *stream };
     unsafe { flockfile(stream) };
@@ -396,7 +396,7 @@ pub unsafe extern "C" fn fclose(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fdopen.html>.
 ///
 /// Open a file from a file descriptor
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fdopen(fildes: c_int, mode: *const c_char) -> *mut FILE {
     helpers::_fdopen(fildes, unsafe { CStr::from_ptr(mode) })
         .map(Box::into_raw)
@@ -406,7 +406,7 @@ pub unsafe extern "C" fn fdopen(fildes: c_int, mode: *const c_char) -> *mut FILE
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/feof.html>.
 ///
 /// Check for EOF
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn feof(stream: *mut FILE) -> c_int {
     let stream = unsafe { (*stream).lock() };
     stream.flags & F_EOF
@@ -415,7 +415,7 @@ pub unsafe extern "C" fn feof(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ferror.html>.
 ///
 /// Check for ERR
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ferror(stream: *mut FILE) -> c_int {
     let stream = unsafe { (*stream).lock() };
     stream.flags & F_ERR
@@ -426,7 +426,7 @@ pub unsafe extern "C" fn ferror(stream: *mut FILE) -> c_int {
 /// Flush output to stream, or sync read position
 /// Ensure the file is unlocked before calling this function, as it will attempt to lock the file
 /// itself.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fflush(stream: *mut FILE) -> c_int {
     if stream.is_null() {
         //TODO: flush all files!
@@ -451,7 +451,7 @@ pub unsafe extern "C" fn fflush(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fgetc.html>.
 ///
 /// Get a single char from a stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fgetc(stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     if (*stream).try_set_byte_orientation_unlocked().is_err() {
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn fgetc(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fgetpos.html>.
 ///
 /// Get the position of the stream and store it in pos
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fgetpos(stream: *mut FILE, pos: *mut fpos_t) -> c_int {
     let off = unsafe { ftello(stream) };
     if off < 0 {
@@ -477,7 +477,7 @@ pub unsafe extern "C" fn fgetpos(stream: *mut FILE, pos: *mut fpos_t) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fgets.html>.
 ///
 /// Get a string from the stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fgets(
     original: *mut c_char,
     max: c_int,
@@ -546,7 +546,7 @@ pub unsafe extern "C" fn fgets(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fileno.html>.
 ///
 /// Get the underlying file descriptor
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fileno(stream: *mut FILE) -> c_int {
     let stream = unsafe { (*stream).lock() };
     *stream.file
@@ -557,7 +557,7 @@ pub unsafe extern "C" fn fileno(stream: *mut FILE) -> c_int {
 /// Lock the file
 /// Do not call any functions other than those with the `_unlocked` postfix while the file is
 /// locked
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn flockfile(file: *mut FILE) {
     if let Err(e) = unsafe { (*file).lock.lock() } {
         todo_error!(0, e, "flockfile error")
@@ -567,7 +567,7 @@ pub unsafe extern "C" fn flockfile(file: *mut FILE) {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fopen.html>.
 ///
 /// Open the file in mode `mode`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fopen(filename: *const c_char, mode: *const c_char) -> *mut FILE {
     let initial_mode = unsafe { *mode };
     if initial_mode != ByteLiteral::cast_cchar(b'r')
@@ -611,7 +611,7 @@ pub unsafe extern "C" fn fopen(filename: *const c_char, mode: *const c_char) -> 
 /// Clear the buffers of a stream
 /// Ensure the file is unlocked before calling this function, as it will attempt to lock the file
 /// itself.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __fpurge(stream: *mut FILE) {
     if !stream.is_null() {
         let mut stream = unsafe { (*stream).lock() };
@@ -622,7 +622,7 @@ pub unsafe extern "C" fn __fpurge(stream: *mut FILE) {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fputc.html>.
 ///
 /// Insert a character into the stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fputc(c: c_int, stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     if (*stream).try_set_byte_orientation_unlocked().is_err() {
@@ -635,7 +635,7 @@ pub unsafe extern "C" fn fputc(c: c_int, stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fputs.html>.
 ///
 /// Insert a string into a stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fputs(s: *const c_char, stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     if (*stream).try_set_byte_orientation_unlocked().is_err() {
@@ -650,7 +650,7 @@ pub unsafe extern "C" fn fputs(s: *const c_char, stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fread.html>.
 ///
 /// Read `nitems` of size `size` into `ptr` from `stream`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fread(
     ptr: *mut c_void,
     size: size_t,
@@ -678,7 +678,7 @@ pub unsafe extern "C" fn fread(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/freopen.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn freopen(
     filename: *const c_char,
     mode: *const c_char,
@@ -740,7 +740,7 @@ pub unsafe extern "C" fn freopen(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fseek.html>.
 ///
 /// Seek to an offset `offset` from `whence`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fseek(stream: *mut FILE, offset: c_long, whence: c_int) -> c_int {
     unsafe { fseeko(stream, offset as off_t, whence) }
 }
@@ -748,7 +748,7 @@ pub unsafe extern "C" fn fseek(stream: *mut FILE, offset: c_long, whence: c_int)
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fseek.html>.
 ///
 /// Seek to an offset `offset` from `whence`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fseeko(stream: *mut FILE, off: off_t, whence: c_int) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     unsafe { fseek_locked(&mut stream, off, whence) }
@@ -781,7 +781,7 @@ pub unsafe fn fseek_locked(stream: &mut FILE, mut off: off_t, whence: c_int) -> 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fsetpos.html>.
 ///
 /// Seek to a position `pos` in the file from the beginning of the file
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fsetpos(stream: *mut FILE, pos: *const fpos_t) -> c_int {
     unsafe { fseeko(stream, *pos, SEEK_SET) }
 }
@@ -789,7 +789,7 @@ pub unsafe extern "C" fn fsetpos(stream: *mut FILE, pos: *const fpos_t) -> c_int
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ftell.html>.
 ///
 /// Get the current position of the cursor in the file
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ftell(stream: *mut FILE) -> c_long {
     unsafe { ftello(stream) as c_long }
 }
@@ -797,7 +797,7 @@ pub unsafe extern "C" fn ftell(stream: *mut FILE) -> c_long {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ftell.html>.
 ///
 /// Get the current position of the cursor in the file
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ftello(stream: *mut FILE) -> off_t {
     let mut stream = unsafe { (*stream).lock() };
     unsafe { ftell_locked(&mut stream) }
@@ -817,7 +817,7 @@ pub unsafe extern "C" fn ftell_locked(stream: &mut FILE) -> off_t {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/flockfile.html>.
 ///
 /// Try to lock the file. Returns 0 for success, 1 for failure
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ftrylockfile(file: *mut FILE) -> c_int {
     if unsafe { (*file).lock.try_lock() }.is_ok() {
         0
@@ -829,7 +829,7 @@ pub unsafe extern "C" fn ftrylockfile(file: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/flockfile.html>.
 ///
 /// Unlock the file
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn funlockfile(file: *mut FILE) {
     if let Err(e) = unsafe { (*file).lock.unlock() } {
         todo_error!(0, e, "RELIBC: funlockfile error")
@@ -839,7 +839,7 @@ pub unsafe extern "C" fn funlockfile(file: *mut FILE) {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fwrite.html>.
 ///
 /// Write `nitems` of size `size` from `ptr` to `stream`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fwrite(
     ptr: *const c_void,
     size: size_t,
@@ -868,7 +868,7 @@ pub unsafe extern "C" fn fwrite(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getc.html>.
 ///
 /// Get a single char from a stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getc(stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     unsafe { getc_unlocked(&raw mut *stream) }
@@ -877,7 +877,7 @@ pub unsafe extern "C" fn getc(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getchar.html>.
 ///
 /// Get a single char from `stdin`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getchar() -> c_int {
     unsafe { fgetc(&raw mut *stdin) }
 }
@@ -885,7 +885,7 @@ pub unsafe extern "C" fn getchar() -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getc_unlocked.html>.
 ///
 /// Get a char from a stream without locking the stream
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getc_unlocked(stream: *mut FILE) -> c_int {
     if unsafe { (*stream).try_set_byte_orientation_unlocked() }.is_err() {
         return -1;
@@ -902,7 +902,7 @@ pub unsafe extern "C" fn getc_unlocked(stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getc_unlocked.html>.
 ///
 /// Get a char from `stdin` without locking `stdin`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getchar_unlocked() -> c_int {
     unsafe { getc_unlocked(&raw mut *stdin) }
 }
@@ -914,7 +914,7 @@ pub unsafe extern "C" fn getchar_unlocked() -> c_int {
 ///
 /// Get a string from `stdin`
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn gets(s: *mut c_char) -> *mut c_char {
     unsafe { fgets(s, c_int::MAX, &raw mut *stdin) }
 }
@@ -925,7 +925,7 @@ pub unsafe extern "C" fn gets(s: *mut c_char) -> *mut c_char {
 ///
 /// Get an integer from `stream`
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getw(stream: *mut FILE) -> c_int {
     let mut ret: c_int = 0;
     if unsafe {
@@ -944,7 +944,7 @@ pub unsafe extern "C" fn getw(stream: *mut FILE) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pclose.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pclose(stream: *mut FILE) -> c_int {
     // TODO: rusty error handling?
     let pid = {
@@ -969,7 +969,7 @@ pub unsafe extern "C" fn pclose(stream: *mut FILE) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/perror.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn perror(s: *const c_char) {
     let err = ERRNO.get();
     let err_str = if err >= 0 && err < STR_ERROR.len() as c_int {
@@ -991,7 +991,7 @@ pub unsafe extern "C" fn perror(s: *const c_char) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/popen.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn popen(command: *const c_char, mode: *const c_char) -> *mut FILE {
     //TODO: share code with system
 
@@ -1080,7 +1080,7 @@ pub unsafe extern "C" fn popen(command: *const c_char, mode: *const c_char) -> *
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/putc.html>.
 ///
 /// Put a character `c` into `stream`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putc(c: c_int, stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     unsafe { putc_unlocked(c, &raw mut *stream) }
@@ -1089,7 +1089,7 @@ pub unsafe extern "C" fn putc(c: c_int, stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/putchar.html>.
 ///
 /// Put a character `c` into `stdout`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putchar(c: c_int) -> c_int {
     unsafe { fputc(c, &raw mut *stdout) }
 }
@@ -1097,7 +1097,7 @@ pub unsafe extern "C" fn putchar(c: c_int) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getc_unlocked.html>.
 ///
 /// Put a character `c` into `stream` without locking `stream`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putc_unlocked(c: c_int, stream: *mut FILE) -> c_int {
     if unsafe { (*stream).try_set_byte_orientation_unlocked() }.is_err() {
         return -1;
@@ -1112,7 +1112,7 @@ pub unsafe extern "C" fn putc_unlocked(c: c_int, stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getc_unlocked.html>.
 ///
 /// Put a character `c` into `stdout` without locking `stdout`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putchar_unlocked(c: c_int) -> c_int {
     unsafe { putc_unlocked(c, stdout) }
 }
@@ -1120,7 +1120,7 @@ pub unsafe extern "C" fn putchar_unlocked(c: c_int) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/puts.html>.
 ///
 /// Put a string `s` into `stdout`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn puts(s: *const c_char) -> c_int {
     let mut stream = unsafe { (&mut *stdout).lock() };
     if (*stream).try_set_byte_orientation_unlocked().is_err() {
@@ -1144,7 +1144,7 @@ pub unsafe extern "C" fn puts(s: *const c_char) -> c_int {
 ///
 /// Put an integer `w` into `stream`
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn putw(w: c_int, stream: *mut FILE) -> c_int {
     (unsafe {
         fwrite(
@@ -1160,7 +1160,7 @@ pub unsafe extern "C" fn putw(w: c_int, stream: *mut FILE) -> c_int {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/remove.html>.
 ///
 /// Delete file or directory `path`
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn remove(path: *const c_char) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::unlink(path)
@@ -1170,7 +1170,7 @@ pub unsafe extern "C" fn remove(path: *const c_char) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/rename.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn rename(oldpath: *const c_char, newpath: *const c_char) -> c_int {
     let oldpath = unsafe { CStr::from_ptr(oldpath) };
     let newpath = unsafe { CStr::from_ptr(newpath) };
@@ -1180,7 +1180,7 @@ pub unsafe extern "C" fn rename(oldpath: *const c_char, newpath: *const c_char) 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/renameat.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn renameat(
     old_dir: c_int,
     old_path: *const c_char,
@@ -1197,7 +1197,7 @@ pub unsafe extern "C" fn renameat(
 /// See <https://www.man7.org/linux/man-pages/man2/rename.2.html>.
 ///
 /// Non-POSIX. Seems to be a GNU extension.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn renameat2(
     old_dir: c_int,
     old_path: *const c_char,
@@ -1215,7 +1215,7 @@ pub unsafe extern "C" fn renameat2(
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/rewind.html>.
 ///
 /// Rewind `stream` back to the beginning of it
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn rewind(stream: *mut FILE) {
     unsafe { fseeko(stream, 0, SEEK_SET) };
 }
@@ -1223,7 +1223,7 @@ pub unsafe extern "C" fn rewind(stream: *mut FILE) {
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/setbuf.html>.
 ///
 /// Reset `stream` to use buffer `buf`. Buffer must be `BUFSIZ` in length
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setbuf(stream: *mut FILE, buf: *mut c_char) {
     unsafe {
         setvbuf(
@@ -1240,7 +1240,7 @@ pub unsafe extern "C" fn setbuf(stream: *mut FILE, buf: *mut c_char) {
 /// Non-POSIX.
 ///
 /// Set buffering of `stream` to line buffered
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setlinebuf(stream: *mut FILE) {
     unsafe { setvbuf(stream, ptr::null_mut(), _IOLBF, 0) };
 }
@@ -1249,7 +1249,7 @@ pub unsafe extern "C" fn setlinebuf(stream: *mut FILE) {
 ///
 /// Reset `stream` to use buffer `buf` of size `size`
 /// If this isn't the meaning of unsafe, idk what is
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setvbuf(
     stream: *mut FILE,
     buf: *mut c_char,
@@ -1278,7 +1278,7 @@ pub unsafe extern "C" fn setvbuf(
 ///
 /// Marked obsolescent in issue 7.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tempnam(dir: *const c_char, pfx: *const c_char) -> *mut c_char {
     unsafe fn is_appropriate(pos_dir: *const c_char) -> bool {
         !pos_dir.is_null() && unsafe { unistd::access(pos_dir, unistd::W_OK) } == 0
@@ -1329,7 +1329,7 @@ pub unsafe extern "C" fn tempnam(dir: *const c_char, pfx: *const c_char) -> *mut
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tmpfile.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tmpfile() -> *mut FILE {
     let mut file_name = *b"/tmp/tmpfileXXXXXX\0";
     let file_name = file_name.as_mut_ptr().cast::<c_char>();
@@ -1356,7 +1356,7 @@ pub unsafe extern "C" fn tmpfile() -> *mut FILE {
 ///
 /// Marked obsolescent in issue 7.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn tmpnam(s: *mut c_char) -> *mut c_char {
     let buf = if s.is_null() {
         (&raw mut TMPNAM_BUF).cast()
@@ -1397,7 +1397,7 @@ unsafe extern "C" fn tmpnam_inner(buf: *mut c_char, offset: usize) -> *mut c_cha
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ungetc.html>.
 ///
 /// Push character `c` back onto `stream` so it'll be read next
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn ungetc(c: c_int, stream: *mut FILE) -> c_int {
     let mut stream = unsafe { (*stream).lock() };
     if (*stream).try_set_byte_orientation_unlocked().is_err() {
@@ -1409,7 +1409,7 @@ pub unsafe extern "C" fn ungetc(c: c_int, stream: *mut FILE) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vfprintf(file: *mut FILE, format: *const c_char, ap: va_list) -> c_int {
     let mut file = unsafe { (*file).lock() };
     if file.try_set_byte_orientation_unlocked().is_err() {
@@ -1420,13 +1420,13 @@ pub unsafe extern "C" fn vfprintf(file: *mut FILE, format: *const c_char, ap: va
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fprintf(file: *mut FILE, format: *const c_char, __valist: ...) -> c_int {
     unsafe { vfprintf(file, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vdprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vdprintf(fd: c_int, format: *const c_char, ap: va_list) -> c_int {
     let mut f = File::new(fd);
 
@@ -1438,25 +1438,25 @@ pub unsafe extern "C" fn vdprintf(fd: c_int, format: *const c_char, ap: va_list)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn dprintf(fd: c_int, format: *const c_char, __valist: ...) -> c_int {
     unsafe { vdprintf(fd, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vprintf(format: *const c_char, ap: va_list) -> c_int {
     unsafe { vfprintf(&raw mut *stdout, format, ap) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn printf(format: *const c_char, __valist: ...) -> c_int {
     unsafe { vfprintf(&raw mut *stdout, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vasprintf(
     strp: *mut *mut c_char,
     format: *const c_char,
@@ -1471,7 +1471,7 @@ pub unsafe extern "C" fn vasprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn asprintf(
     strp: *mut *mut c_char,
     format: *const c_char,
@@ -1481,7 +1481,7 @@ pub unsafe extern "C" fn asprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vsnprintf(
     s: *mut c_char,
     n: size_t,
@@ -1498,7 +1498,7 @@ pub unsafe extern "C" fn vsnprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn snprintf(
     s: *mut c_char,
     n: size_t,
@@ -1515,7 +1515,7 @@ pub unsafe extern "C" fn snprintf(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vsprintf(s: *mut c_char, format: *const c_char, ap: va_list) -> c_int {
     unsafe {
         printf::printf(
@@ -1527,7 +1527,7 @@ pub unsafe extern "C" fn vsprintf(s: *mut c_char, format: *const c_char, ap: va_
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fprintf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn sprintf(s: *mut c_char, format: *const c_char, __valist: ...) -> c_int {
     unsafe {
         printf::printf(
@@ -1539,7 +1539,7 @@ pub unsafe extern "C" fn sprintf(s: *mut c_char, format: *const c_char, __valist
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vfscanf(file: *mut FILE, format: *const c_char, ap: va_list) -> c_int {
     let mut file = unsafe { (*file).lock() };
     if file.try_set_byte_orientation_unlocked().is_err() {
@@ -1555,25 +1555,25 @@ pub unsafe extern "C" fn vfscanf(file: *mut FILE, format: *const c_char, ap: va_
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fscanf(file: *mut FILE, format: *const c_char, __valist: ...) -> c_int {
     unsafe { vfscanf(file, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vscanf(format: *const c_char, ap: va_list) -> c_int {
     unsafe { vfscanf(&raw mut *stdin, format, ap) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn scanf(format: *const c_char, __valist: ...) -> c_int {
     unsafe { vfscanf(&raw mut *stdin, format, __valist) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/vfscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn vsscanf(s: *const c_char, format: *const c_char, ap: va_list) -> c_int {
     unsafe {
         let format = CStr::from_ptr(format);
@@ -1583,7 +1583,7 @@ pub unsafe extern "C" fn vsscanf(s: *const c_char, format: *const c_char, ap: va
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fscanf.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn sscanf(s: *const c_char, format: *const c_char, __valist: ...) -> c_int {
     unsafe {
         let format = CStr::from_ptr(format);

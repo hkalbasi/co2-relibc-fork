@@ -183,21 +183,21 @@ fn bytes_to_box_str(bytes: &[u8]) -> Box<str> {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endnetent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn endnetent() {
     if let Ok(()) = Sys::close(unsafe { NETDB }) {}; // TODO handle error
     unsafe { NETDB = 0 };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endprotoent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn endprotoent() {
     if let Ok(()) = Sys::close(unsafe { PROTODB }) {}; // TODO handle error
     unsafe { PROTODB = 0 };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endservent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn endservent() {
     if let Ok(()) = Sys::close(unsafe { SERVDB }) {}; // TODO handle error
     unsafe { SERVDB = 0 };
@@ -222,7 +222,7 @@ pub unsafe extern "C" fn endservent() {
 /// # Deprecation
 /// Deprecated as of POSIX.1-2001 and removed in POSIX.1-2008.
 /// New code should use [`getaddrinfo`] instead.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[deprecated]
 pub unsafe extern "C" fn gethostbyaddr(
     v: *const c_void,
@@ -331,7 +331,7 @@ pub unsafe extern "C" fn gethostbyaddr(
 /// # Deprecation
 /// Deprecated as of POSIX.1-2001 and removed in POSIX.1-2008.
 /// New code should use [`getaddrinfo`] instead.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[deprecated]
 pub unsafe extern "C" fn gethostbyname(name: *const c_char) -> *mut hostent {
     let name_cstr = unsafe {
@@ -427,7 +427,7 @@ pub unsafe extern "C" fn getnetbyaddr(net: u32, net_type: c_int) -> *mut netent 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endnetent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getnetbyname(name: *const c_char) -> *mut netent {
     let mut n: *mut netent;
     unsafe { setnetent(NET_STAYOPEN) };
@@ -447,7 +447,7 @@ pub unsafe extern "C" fn getnetbyname(name: *const c_char) -> *mut netent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endnetent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getnetent() -> *mut netent {
     // TODO: Rustify implementation
 
@@ -512,7 +512,7 @@ pub unsafe extern "C" fn getnetent() -> *mut netent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endprotoent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getprotobyname(name: *const c_char) -> *mut protoent {
     let mut p: *mut protoent;
     unsafe { setprotoent(PROTO_STAYOPEN) };
@@ -549,7 +549,7 @@ pub unsafe extern "C" fn getprotobyname(name: *const c_char) -> *mut protoent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endprotoent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getprotobynumber(number: c_int) -> *mut protoent {
     unsafe { setprotoent(PROTO_STAYOPEN) };
     let mut p: *mut protoent;
@@ -568,7 +568,7 @@ pub unsafe extern "C" fn getprotobynumber(number: c_int) -> *mut protoent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endprotoent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getprotoent() -> *mut protoent {
     if unsafe { PROTODB } == 0 {
         unsafe { PROTODB = Sys::open(c"/etc/protocols".into(), O_RDONLY, 0).or_minus_one_errno() };
@@ -636,7 +636,7 @@ pub unsafe extern "C" fn getprotoent() -> *mut protoent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endservent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getservbyname(name: *const c_char, proto: *const c_char) -> *mut servent {
     unsafe { setservent(SERV_STAYOPEN) };
     let mut p: *mut servent;
@@ -669,7 +669,7 @@ pub unsafe extern "C" fn getservbyname(name: *const c_char, proto: *const c_char
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endservent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getservbyport(port: c_int, proto: *const c_char) -> *mut servent {
     unsafe { setservent(SERV_STAYOPEN) };
     let mut p: *mut servent;
@@ -700,7 +700,7 @@ pub unsafe extern "C" fn getservbyport(port: c_int, proto: *const c_char) -> *mu
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endservent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getservent() -> *mut servent {
     if unsafe { SERVDB } == 0 {
         // TODO: Rustify
@@ -801,7 +801,7 @@ pub unsafe extern "C" fn getservent() -> *mut servent {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endnetent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setnetent(stayopen: c_int) {
     unsafe { NET_STAYOPEN = stayopen };
     if unsafe { NETDB } == 0 {
@@ -813,7 +813,7 @@ pub unsafe extern "C" fn setnetent(stayopen: c_int) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endprotoent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setprotoent(stayopen: c_int) {
     unsafe { PROTO_STAYOPEN = stayopen };
     if unsafe { PROTODB } == 0 {
@@ -825,7 +825,7 @@ pub unsafe extern "C" fn setprotoent(stayopen: c_int) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endservent.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn setservent(stayopen: c_int) {
     unsafe { SERV_STAYOPEN = stayopen };
     if unsafe { SERVDB } == 0 {
@@ -837,7 +837,7 @@ pub unsafe extern "C" fn setservent(stayopen: c_int) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/freeaddrinfo.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getaddrinfo(
     node: *const c_char,
     service: *const c_char,
@@ -949,7 +949,7 @@ pub unsafe extern "C" fn getaddrinfo(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getnameinfo.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn getnameinfo(
     addr: *const sockaddr,
     addrlen: socklen_t,
@@ -1045,7 +1045,7 @@ pub unsafe extern "C" fn getnameinfo(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/freeaddrinfo.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn freeaddrinfo(res: *mut addrinfo) {
     let mut ai = res;
     while !ai.is_null() {
@@ -1067,7 +1067,7 @@ pub unsafe extern "C" fn freeaddrinfo(res: *mut addrinfo) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/gai_strerror.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub const extern "C" fn gai_strerror(errcode: c_int) -> *const c_char {
     match errcode {
         EAI_BADFLAGS => c"Invalid flags",
@@ -1088,13 +1088,13 @@ pub const extern "C" fn gai_strerror(errcode: c_int) -> *const c_char {
 }
 
 /// Provide a pointer to relibc's internal [`H_ERRNO`].
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[deprecated]
 pub extern "C" fn __h_errno_location() -> *mut c_int {
     H_ERRNO.as_ptr()
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[deprecated]
 pub const extern "C" fn hstrerror(errcode: c_int) -> *const c_char {
     match errcode {
@@ -1123,7 +1123,7 @@ pub const extern "C" fn hstrerror(errcode: c_int) -> *const c_char {
 /// POSIX.1-2001 and removed as of POSIX.1-2008. These functions are provided for backwards
 /// compatibility but should not be used by new code.
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[deprecated]
 pub extern "C" fn herror(prefix: *const c_char) {
     let code = H_ERRNO.get();

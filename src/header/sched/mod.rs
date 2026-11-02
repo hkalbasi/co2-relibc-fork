@@ -80,7 +80,7 @@ pub extern "C" fn sched_setscheduler(
 ///
 /// Force the running thread to relinquish the processor until it again
 /// becomes the head of its thread list.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn sched_yield() -> c_int {
     Sys::sched_yield().map(|()| 0).or_minus_one_errno()
 }

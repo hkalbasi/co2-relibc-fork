@@ -53,7 +53,7 @@ pub const REG_ESPACE: c_int = 13;
 pub const REG_BADRPT: c_int = 14;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/regcomp.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[linkage = "weak"] // redefined in GIT
 pub unsafe extern "C" fn regcomp(out: *mut regex_t, pat: *const c_char, cflags: c_int) -> c_int {
     let pat = unsafe { slice::from_raw_parts(pat.cast::<u8>(), strlen(pat)) };
@@ -87,14 +87,14 @@ pub unsafe extern "C" fn regcomp(out: *mut regex_t, pat: *const c_char, cflags: 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/regfree.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[linkage = "weak"] // redefined in GIT
 pub unsafe extern "C" fn regfree(regex: *mut regex_t) {
     unsafe { drop(Box::from_raw((*regex).ptr)) };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/regexec.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[linkage = "weak"] // redefined in GIT
 pub unsafe extern "C" fn regexec(
     regex: *const regex_t,
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn regexec(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/regerror.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 #[linkage = "weak"] // redefined in GIT
 pub extern "C" fn regerror(
     code: c_int,

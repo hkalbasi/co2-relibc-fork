@@ -87,7 +87,7 @@ unsafe fn strcolcmp(mut lstr: *const c_char, mut bstr: *const c_char) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/fmtmsg.h.html>
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn fmtmsg(
     classification: c_long,
     label: *const c_char,

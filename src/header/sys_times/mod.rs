@@ -15,7 +15,7 @@ pub struct tms {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/times.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn times(out: *mut tms) -> clock_t {
     todo_panic!(0, "TODO: times not implemented");
 }

@@ -13,7 +13,7 @@ use core::ptr;
 
 /// See <https://man7.org/linux/man-pages/man3/posix_memalign.3.html>.
 #[deprecated]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pvalloc(size: size_t) -> *mut c_void {
     let page_size = Sys::getpagesize();
     // Find the smallest multiple of the page size in which the requested size
@@ -42,7 +42,7 @@ pub unsafe extern "C" fn pvalloc(size: size_t) -> *mut c_void {
 }
 
 /// See <https://man7.org/linux/man-pages/man3/malloc_usable_size.3.html>.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn malloc_usable_size(ptr: *mut c_void) -> size_t {
     unsafe { platform::alloc_usable_size(ptr) }
 }

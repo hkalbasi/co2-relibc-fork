@@ -198,7 +198,7 @@ pub unsafe fn select_epoll(
 ///
 /// Upon success, returns the total number of bits set in the bit masks. Upon
 /// failure, returns `-1` and sets errno to indicate the error.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn select(
     nfds: c_int,
     readfds: *mut fd_set,
@@ -253,7 +253,7 @@ pub unsafe extern "C" fn select(
 ///
 /// Upon success, returns the total number of bits set in the bit masks. Upon
 /// failure, returns `-1` and sets errno to indicate the error.
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn pselect(
     nfds: c_int,
     readfds: *mut fd_set,
