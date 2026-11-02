@@ -84,7 +84,7 @@ static INIT_ARRAY: [extern "C" fn(); 1] = [init_array];
 static mut INIT_COMPLETE: bool = false;
 
 #[used]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 static mut __relibc_init_environ: *mut *mut c_char = ptr::null_mut();
 
 extern "C" fn init_array() {

@@ -53,9 +53,9 @@ pub fn default_stderr() -> &'static GlobalFile {
     DEFAULT_STDERR.call_once(|| GlobalFile::new(2, constants::F_NORD))
 }
 
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut stdin: *mut FILE = ptr::null_mut();
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut stdout: *mut FILE = ptr::null_mut();
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub static mut stderr: *mut FILE = ptr::null_mut();
