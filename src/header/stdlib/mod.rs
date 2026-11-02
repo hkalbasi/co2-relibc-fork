@@ -450,6 +450,7 @@ unsafe fn find_env(search: *const c_char) -> Option<(usize, *mut c_char)> {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getenv.html>.
+#[cfg(not(miri))]
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn getenv(name: *const c_char) -> *mut c_char {
     unsafe { find_env(name) }
