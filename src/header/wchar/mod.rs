@@ -574,7 +574,7 @@ pub extern "C" fn wcsftime(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcslen.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wcslen(ws: *const wchar_t) -> size_t {
     unsafe { NulTerminated::new(ws).unwrap() }.count()
 }

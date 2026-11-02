@@ -50,7 +50,7 @@ pub unsafe extern "C" fn memccpy(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/memchr.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memchr(
     haystack: *const c_void,
     needle: c_int,
@@ -65,7 +65,7 @@ pub unsafe extern "C" fn memchr(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/memcmp.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memcmp(s1: *const c_void, s2: *const c_void, n: size_t) -> c_int {
     let (div, rem) = (n / mem::size_of::<size_t>(), n % mem::size_of::<size_t>());
     let mut a = s1.cast::<usize>();
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn memcmp(s1: *const c_void, s2: *const c_void, n: size_t)
 ///     - `s1` is convertible to a `&mut [MaybeUninit<u8>]` with length `n`,
 ///       and
 ///     - `s2` is convertible to a `&[MaybeUninit<u8>]` with length `n`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memcpy(s1: *mut c_void, s2: *const c_void, n: size_t) -> *mut c_void {
     for i in 0..n {
         unsafe { *s1.cast::<u8>().add(i) = *s2.cast::<u8>().add(i) };
@@ -174,7 +174,7 @@ pub unsafe extern "C" fn memmove(s1: *mut c_void, s2: *const c_void, n: size_t) 
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/memchr.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memrchr(
     haystack: *const c_void,
     needle: c_int,
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn memrchr(
 ///
 /// # Implementation
 /// Casting of `c` may result in truncation.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memset(s: *mut c_void, c: c_int, n: size_t) -> *mut c_void {
     for i in 0..n {
         unsafe { *s.cast::<u8>().add(i) = c as u8 };
@@ -331,7 +331,7 @@ pub unsafe extern "C" fn strcoll(s1: *const c_char, s2: *const c_char) -> c_int 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strcpy.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strcpy(dst: *mut c_char, src: *const c_char) -> *mut c_char {
     let src_iter = unsafe { NulTerminated::new(src).unwrap() };
     let src_dest_iter = unsafe { SrcDstPtrIter::new(src_iter.chain(once(&0)), dst) };
@@ -564,7 +564,7 @@ pub unsafe extern "C" fn strndup(s1: *const c_char, size: size_t) -> *mut c_char
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strlen.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strnlen(s: *const c_char, size: size_t) -> size_t {
     unsafe { NulTerminated::new(s).unwrap() }.take(size).count()
 }
