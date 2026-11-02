@@ -739,8 +739,7 @@ pub unsafe extern "C" fn getwd(path_name: *mut c_char) -> *mut c_char {
 ///
 /// Returns `1` to indicate `fildes` is associated with a terminal device or
 /// returns `0` to indicate it is not.
-#[cfg(not(miri))]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn isatty(fildes: c_int) -> c_int {
     let mut t = termios::termios::default();
     if unsafe { termios::tcgetattr(fildes, &raw mut t) == 0 } {
