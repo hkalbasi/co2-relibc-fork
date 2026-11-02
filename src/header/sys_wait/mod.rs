@@ -49,7 +49,7 @@ pub const __WCLONE: c_int = 0x8000_0000;
 /// reported. If returning due to the delivery of a signal to the calling
 /// process, returns `-1` and sets errno to `EINTR`. If otherwise failing,
 /// returns `-1` and sets errno.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wait(stat_loc: *mut c_int) -> pid_t {
     unsafe { waitpid(!0, stat_loc, 0) }
 }
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn wait(stat_loc: *mut c_int) -> pid_t {
 /// wchich status is not available, and status is not available for any process
 /// specified by `pid`, `0` is returned. If otherwise failing, returns `-1` and
 /// sets errno.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn waitpid(pid: pid_t, stat_loc: *mut c_int, options: c_int) -> pid_t {
     Sys::waitpid(pid, unsafe { Out::nullable(stat_loc) }, options).or_minus_one_errno()
 }

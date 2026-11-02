@@ -187,7 +187,7 @@ pub const PRIO_USER: c_int = 2;
 /// an error occurred. To distinguish between them, first set `errno` to `0`
 /// before calling `getpriority()`, then check the value of `errno` after the
 /// call to `getpriority()`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn getpriority(which: c_int, who: id_t) -> c_int {
     let r = Sys::getpriority(which, who).or_minus_one_errno();
     if r < 0 {
@@ -204,7 +204,7 @@ pub extern "C" fn getpriority(which: c_int, who: id_t) -> c_int {
 /// user.
 ///
 /// A return value of `0` indicates success, `-1` indicates error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn setpriority(which: c_int, who: id_t, nice: c_int) -> c_int {
     Sys::setpriority(which, who, nice)
         .map(|()| 0)
@@ -217,7 +217,7 @@ pub extern "C" fn setpriority(which: c_int, who: id_t, nice: c_int) -> c_int {
 /// struct pointed to by `rlp`.
 ///
 /// A return value of `0` indicates success, `-1` indicates error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getrlimit(resource: c_int, rlp: *mut rlimit) -> c_int {
     Sys::getrlimit(resource, unsafe { Out::nonnull(rlp) })
         .map(|()| 0)
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn getrlimit(resource: c_int, rlp: *mut rlimit) -> c_int {
 /// in the `rlimit` struct pointed to by `rlp`.
 ///
 /// A return value of `0` indicates success, `-1` indicates error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn setrlimit(resource: c_int, rlp: *const rlimit) -> c_int {
     unsafe { Sys::setrlimit(resource, rlp) }
         .map(|()| 0)
@@ -244,7 +244,7 @@ pub unsafe extern "C" fn setrlimit(resource: c_int, rlp: *const rlimit) -> c_int
 /// to by `r_usage`.
 ///
 /// A return value of `0` indicates success, `-1` indicates error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getrusage(who: c_int, r_usage: *mut rusage) -> c_int {
     Sys::getrusage(who, unsafe { Out::nonnull(r_usage) })
         .map(|()| 0)

@@ -17,7 +17,7 @@ pub use sys::*;
 
 use core::ffi::{c_int, c_long};
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sysconf(name: c_int) -> c_long {
     sysconf_impl(name)
 }

@@ -26,7 +26,7 @@ const LOCKED: c_int = 1;
 ///   reinitialized with `pthread_spin_init()`.
 /// - This function is called when a thread holds the lock.
 /// - `lock` is uninitialized when this function is called.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_spin_destroy(lock: *mut pthread_spinlock_t) -> c_int {
     let _spinlock = unsafe { &mut *lock.cast::<RlctSpinlock>() };
 
@@ -47,7 +47,7 @@ pub unsafe extern "C" fn pthread_spin_destroy(lock: *mut pthread_spinlock_t) -> 
 /// It is undefined behaviour for any of the following:
 /// - `lock` has already been initialized.
 /// - `lock` has been used before being initialized by this function.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_spin_init(
     lock: *mut pthread_spinlock_t,
     _pshared: c_int,
@@ -73,7 +73,7 @@ pub unsafe extern "C" fn pthread_spin_init(
 /// It is undefined behaviour for any of the following:
 /// - `lock` is uninitialized.
 /// - The calling thread holds `lock` at the time the call is made.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_spin_lock(lock: *mut pthread_spinlock_t) -> c_int {
     let spinlock = unsafe { &*lock.cast::<RlctSpinlock>() };
 
@@ -99,7 +99,7 @@ pub unsafe extern "C" fn pthread_spin_lock(lock: *mut pthread_spinlock_t) -> c_i
 ///
 /// # Safety
 /// It is undefined behaviour if `lock` is uninitialized.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_spin_trylock(lock: *mut pthread_spinlock_t) -> c_int {
     let spinlock = unsafe { &*lock.cast::<RlctSpinlock>() };
 
@@ -127,7 +127,7 @@ pub unsafe extern "C" fn pthread_spin_trylock(lock: *mut pthread_spinlock_t) -> 
 /// It is undefined behaviour for any of the following:
 /// - `lock` is uninitialized.
 /// - `lock` is not held by the calling thread.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_spin_unlock(lock: *mut pthread_spinlock_t) -> c_int {
     let spinlock = unsafe { &*lock.cast::<RlctSpinlock>() };
 

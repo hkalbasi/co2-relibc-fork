@@ -41,7 +41,7 @@ pub struct utsname {
 /// to by `name`.
 ///
 /// Returns a non-negative value upon success, `-1` upon failure.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn uname(name: *mut utsname) -> c_int {
     Sys::uname(unsafe { Out::nonnull(name) })
         .map(|()| 0)

@@ -232,7 +232,7 @@ unsafe fn mux(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endpwent.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn endpwent() {
     unsafe {
         READER.unsafe_set(None);
@@ -240,7 +240,7 @@ pub extern "C" fn endpwent() {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endpwent.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn getpwent() -> *mut passwd {
     let reader = match unsafe { &mut *READER.as_mut_ptr() } {
         Some(reader) => reader,
@@ -261,7 +261,7 @@ pub extern "C" fn getpwent() -> *mut passwd {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getpwnam.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getpwnam(name: *const c_char) -> *mut passwd {
     pwd_lookup(|parts| unsafe { strcmp(parts.pw_name, name) } == 0, None)
         .map(|res| res.into_global())
@@ -269,7 +269,7 @@ pub unsafe extern "C" fn getpwnam(name: *const c_char) -> *mut passwd {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getpwnam.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getpwnam_r(
     name: *const c_char,
     out: *mut passwd,
@@ -293,7 +293,7 @@ pub unsafe extern "C" fn getpwnam_r(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getpwuid.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn getpwuid(uid: uid_t) -> *mut passwd {
     pwd_lookup(|parts| parts.pw_uid == uid, None)
         .map(|res| res.into_global())
@@ -301,7 +301,7 @@ pub extern "C" fn getpwuid(uid: uid_t) -> *mut passwd {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getpwuid.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getpwuid_r(
     uid: uid_t,
     out: *mut passwd,
@@ -326,7 +326,7 @@ pub unsafe extern "C" fn getpwuid_r(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/endpwent.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn setpwent() {
     if let Some(reader) = unsafe { &mut *READER.as_mut_ptr() } {
         let _ = reader.seek(SeekFrom::Start(0));

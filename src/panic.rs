@@ -1,6 +1,6 @@
 use core::fmt::Write;
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn relibc_panic(pi: &::core::panic::PanicInfo) -> ! {
     use core::fmt::Write;
 

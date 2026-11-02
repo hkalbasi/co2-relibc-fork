@@ -100,7 +100,7 @@ pub struct termios {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcgetattr(fildes: c_int, termios_p: *mut termios) -> c_int {
     unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TCGETS, termios_p.cast::<c_void>()) }
 }
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn tcgetattr(fildes: c_int, termios_p: *mut termios) -> c_
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcsetattr(
     fildes: c_int,
     optional_actions: c_int,
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn tcsetattr(
 /// Upon success, returns the process group ID of the session associated with
 /// the terminal. Upon failure, returns `-1` and sets errno to indicate the
 /// error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcgetsid(fildes: c_int) -> pid_t {
     let mut sid = 0;
     if unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TIOCGSID, (&raw mut sid).cast::<c_void>()) } < 0
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn tcgetsid(fildes: c_int) -> pid_t {
 ///
 /// # Implementation
 /// Infallible. Always returns a value.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfgetispeed(termios_p: *const termios) -> speed_t {
     #[cfg(target_os = "linux")]
     {
@@ -185,7 +185,7 @@ pub unsafe extern "C" fn cfgetispeed(termios_p: *const termios) -> speed_t {
 ///
 /// # Implementation
 /// Infallible. Always returns a value.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfgetospeed(termios_p: *const termios) -> speed_t {
     #[cfg(target_os = "linux")]
     {
@@ -205,7 +205,7 @@ pub unsafe extern "C" fn cfgetospeed(termios_p: *const termios) -> speed_t {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfsetispeed(termios_p: *mut termios, speed: speed_t) -> c_int {
     match speed as usize {
         // TODO redox impl
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn cfsetispeed(termios_p: *mut termios, speed: speed_t) ->
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfsetospeed(termios_p: *mut termios, speed: speed_t) -> c_int {
     match speed as usize {
         // TODO redox impl
@@ -256,7 +256,7 @@ pub unsafe extern "C" fn cfsetospeed(termios_p: *mut termios, speed: speed_t) ->
 ///
 /// # Implementation
 /// Calls `cfsetispeed()` and if successful then calls `cfsetospeed()`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfsetspeed(termios_p: *mut termios, speed: speed_t) -> c_int {
     let r = unsafe { cfsetispeed(termios_p, speed) };
     if r < 0 {
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn cfsetspeed(termios_p: *mut termios, speed: speed_t) -> 
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcflush(fildes: c_int, queue_selector: c_int) -> c_int {
     match queue_selector {
         TCIFLUSH | TCOFLUSH | TCIOFLUSH => unsafe {
@@ -293,7 +293,7 @@ pub unsafe extern "C" fn tcflush(fildes: c_int, queue_selector: c_int) -> c_int 
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcdrain(fildes: c_int) -> c_int {
     unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TCSBRK, core::ptr::dangling_mut()) }
 }
@@ -309,7 +309,7 @@ pub unsafe extern "C" fn tcdrain(fildes: c_int) -> c_int {
 /// # Implementation
 /// This function does not accept a non-zero duration. `_duration` is ignored
 /// and assumed to be `0`. Matches behaviour of musl.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcsendbreak(fildes: c_int, _duration: c_int) -> c_int {
     unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TCSBRK, core::ptr::null_mut()) }
 }
@@ -321,7 +321,7 @@ pub unsafe extern "C" fn tcsendbreak(fildes: c_int, _duration: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcgetwinsize(fildes: c_int, winsize_p: *mut winsize) -> c_int {
     unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TIOCGWINSZ, winsize_p.cast()) }
 }
@@ -338,7 +338,7 @@ pub unsafe extern "C" fn tcgetwinsize(fildes: c_int, winsize_p: *mut winsize) ->
 /// It is undefined behaviour if the value of the winsize structure pointed to
 /// by `winsize_p` was not derived from the result of a call to
 /// `tcsgetwinsize()` on `fildes`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcsetwinsize(fildes: c_int, winsize_p: *const winsize) -> c_int {
     unsafe { sys_ioctl::ioctl(fildes, sys_ioctl::TIOCSWINSZ, winsize_p.cast_mut().cast()) }
 }
@@ -350,7 +350,7 @@ pub unsafe extern "C" fn tcsetwinsize(fildes: c_int, winsize_p: *const winsize) 
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn tcflow(fildes: c_int, action: c_int) -> c_int {
     match action {
         TCIOFF | TCION | TCOOFF | TCOON => unsafe {
@@ -369,7 +369,7 @@ pub unsafe extern "C" fn tcflow(fildes: c_int, action: c_int) -> c_int {
 /// Sets the terminal to something similar to "raw" mode: input is available
 /// character by character, echoing is disabled, and all special processing of
 /// terminal input and output characters is disabled.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn cfmakeraw(termios_p: *mut termios) {
     unsafe {
         (*termios_p).c_iflag &=

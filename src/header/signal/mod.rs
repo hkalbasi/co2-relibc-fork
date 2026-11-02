@@ -189,7 +189,7 @@ pub type stack_t = sigaltstack;
 
 //NOTE for the following two functions, to see why they're implemented slightly differently from their intended behavior, read
 //     https://git.musl-libc.org/cgit/musl/commit/?id=583e55122e767b1586286a0d9c35e2a4027998ab
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 unsafe extern "C" fn __sigsetjmp_tail(jb: *mut c_ulonglong, ret: c_int) -> c_int {
     let set = jb.wrapping_add(9);
     if ret > 0 {
@@ -206,7 +206,7 @@ unsafe extern "C" fn __sigsetjmp_tail(jb: *mut c_ulonglong, ret: c_int) -> c_int
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error. No signal is sent if failed.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn kill(pid: pid_t, sig: c_int) -> c_int {
     Sys::kill(pid, sig).map(|()| 0).or_minus_one_errno()
 }
@@ -218,7 +218,7 @@ pub extern "C" fn kill(pid: pid_t, sig: c_int) -> c_int {
 ///
 /// Upon success, the specified signal shall have been queued, and returns `0`.
 /// Upon error, returns `-1` and sets errno to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn sigqueue(pid: pid_t, signo: c_int, value: sigval) -> c_int {
     Sys::sigqueue(pid, signo, value)
         .map(|()| 0)
@@ -232,7 +232,7 @@ pub extern "C" fn sigqueue(pid: pid_t, signo: c_int, value: sigval) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error. No signal is sent if failed.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn killpg(pgrp: pid_t, sig: c_int) -> c_int {
     Sys::killpg(pgrp, sig).map(|()| 0).or_minus_one_errno()
 }
@@ -244,7 +244,7 @@ pub extern "C" fn killpg(pgrp: pid_t, sig: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns an error number and does
 /// not send the signal.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_kill(thread: pthread_t, sig: c_int) -> c_int {
     let os_tid = {
         let pthread = unsafe { &*(thread as *const crate::pthread::Pthread) };
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn pthread_kill(thread: pthread_t, sig: c_int) -> c_int {
 /// Examines or changes (or both) the calling thread's signal mask.
 ///
 /// Upon success, returns `0`. Upon failure, returns an error number.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_sigmask(
     how: c_int,
     set: *const sigset_t,
@@ -281,7 +281,7 @@ pub unsafe extern "C" fn pthread_sigmask(
 ///
 /// Upon success, returns `0`. Upon failure, returns a non-zero value and sets
 /// errno to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn raise(sig: c_int) -> c_int {
     Sys::raise(sig).map(|()| 0).or_minus_one_errno()
 }
@@ -293,7 +293,7 @@ pub extern "C" fn raise(sig: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1`, sets errno to
 /// indicate the error, and no new signal-catching function shall be installed.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigaction(
     sig: c_int,
     act: *const sigaction,
@@ -316,7 +316,7 @@ pub unsafe extern "C" fn sigaction(
 /// The `sigset_t` pointed to by `set` must be initialized by `sigemptyset()`
 /// or `sigfillset()` before calling this function or undefined behaviour will
 /// occur.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigaddset(set: *mut sigset_t, signo: c_int) -> c_int {
     if signo <= 0 || signo as usize > NSIG.max(SIGRTMAX)
     /* TODO */
@@ -342,7 +342,7 @@ pub unsafe extern "C" fn sigaddset(set: *mut sigset_t, signo: c_int) -> c_int {
 /// # Safety
 /// Use of this function by library threads that are not bound to
 /// kernel-scheduled entities results in undefined behaviour.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigaltstack(ss: *const stack_t, old_ss: *mut stack_t) -> c_int {
     unsafe {
         Sys::sigaltstack(ss.as_ref(), old_ss.as_mut())
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn sigaltstack(ss: *const stack_t, old_ss: *mut stack_t) -
 /// The `sigset_t` pointed to by `set` must be initialized by `sigemptyset()`
 /// or `sigfillset()` before calling this function or undefined behaviour will
 /// occur.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigdelset(set: *mut sigset_t, signo: c_int) -> c_int {
     if signo <= 0 || signo as usize > NSIG.max(SIGRTMAX)
     /* TODO */
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn sigdelset(set: *mut sigset_t, signo: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigemptyset(set: *mut sigset_t) -> c_int {
     if let Some(set) = unsafe { (set.cast::<SigSet>()).as_mut() } {
         set.clear();
@@ -400,7 +400,7 @@ pub unsafe extern "C" fn sigemptyset(set: *mut sigset_t) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigfillset(set: *mut sigset_t) -> c_int {
     if let Some(set) = unsafe { (set.cast::<SigSet>()).as_mut() } {
         set.fill(.., true);
@@ -425,7 +425,7 @@ pub unsafe extern "C" fn sigfillset(set: *mut sigset_t) -> c_int {
 /// # Implementation
 /// Calls `sigprocmask()` internally.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sighold(sig: c_int) -> c_int {
     let mut pset = mem::MaybeUninit::<sigset_t>::uninit();
     unsafe { sigemptyset(pset.as_mut_ptr()) };
@@ -454,7 +454,7 @@ pub unsafe extern "C" fn sighold(sig: c_int) -> c_int {
 /// Calls `sigaction()` internally.
 #[deprecated]
 #[expect(clippy::missing_transmute_annotations, reason = "too verbose")]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn sigignore(sig: c_int) -> c_int {
     let mut psa = mem::MaybeUninit::<sigaction>::uninit();
     unsafe { sigemptyset(&raw mut (*psa.as_mut_ptr()).sa_mask) };
@@ -480,7 +480,7 @@ pub extern "C" fn sigignore(sig: c_int) -> c_int {
 /// # Implementation
 /// Internally uses `sigaction()` with the `SA_RESTART` flag.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn siginterrupt(sig: c_int, flag: c_int) -> c_int {
     let mut psa = mem::MaybeUninit::<sigaction>::uninit();
     unsafe { sigaction(sig, ptr::null_mut(), psa.as_mut_ptr()) };
@@ -507,7 +507,7 @@ pub extern "C" fn siginterrupt(sig: c_int, flag: c_int) -> c_int {
 /// The `sigset_t` pointed to by `set` must be initialized by `sigemptyset()`
 /// or `sigfillset()` before calling this function or undefined behaviour will
 /// occur.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigismember(set: *const sigset_t, signo: c_int) -> c_int {
     if signo <= 0 || signo as usize > NSIG.max(SIGRTMAX)
     /* TODO */
@@ -533,7 +533,7 @@ pub unsafe extern "C" fn sigismember(set: *const sigset_t, signo: c_int) -> c_in
 /// `signal()` for the specified signal `sig`.Upon failure, returns `SIG_ERR`
 /// and a positive value shall be stored in errno.
 #[expect(clippy::missing_transmute_annotations, reason = "too verbose")]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn signal(
     sig: c_int,
     func: Option<extern "C" fn(c_int)>,
@@ -578,7 +578,7 @@ pub extern "C" fn signal(
 /// # Implementation
 /// Calls `sigsuspend()` internally.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigpause(sig: c_int) -> c_int {
     let mut pset = mem::MaybeUninit::<sigset_t>::uninit();
     unsafe { sigprocmask(0, ptr::null_mut(), pset.as_mut_ptr()) };
@@ -597,7 +597,7 @@ pub unsafe extern "C" fn sigpause(sig: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigpending(set: *mut sigset_t) -> c_int {
     (|| Sys::sigpending(unsafe { set.as_mut().ok_or(Errno(EFAULT)) }?))()
         .map(|()| 0)
@@ -620,7 +620,7 @@ const RLCT_SIGNAL_MASK: sigset_t = (1 << ((SIGRTMIN - 1) - 1)) | (1 << ((SIGRTMI
 /// indicate the error, and does not change the signal mask.
 ///
 /// Use of this function is unspecified in a multi-threaded process.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigprocmask(
     how: c_int,
     set: *const sigset_t,
@@ -662,7 +662,7 @@ pub unsafe extern "C" fn sigprocmask(
 /// # Implementation
 /// Calls `sigprocmask()` internally.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigrelse(sig: c_int) -> c_int {
     let mut pset = mem::MaybeUninit::<sigset_t>::uninit();
     unsafe { sigemptyset(pset.as_mut_ptr()) };
@@ -691,7 +691,7 @@ pub unsafe extern "C" fn sigrelse(sig: c_int) -> c_int {
 /// # Implementation
 /// Calls `sigaction()` internally.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigset(
     sig: c_int,
     func: Option<extern "C" fn(c_int)>,
@@ -752,7 +752,7 @@ pub unsafe extern "C" fn sigset(
 /// set that existed prior to calling this function, then sets errno to
 /// indicate the error. Upon failure, returns `-1` and sets errno to indicate
 /// the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigsuspend(sigmask: *const sigset_t) -> c_int {
     Err(Sys::sigsuspend(unsafe { &*sigmask })).or_minus_one_errno()
 }
@@ -766,7 +766,7 @@ pub unsafe extern "C" fn sigsuspend(sigmask: *const sigset_t) -> c_int {
 /// Upon success, stores the signal number of the received signal at the
 /// location referenced by `sig` and returns `0`. Upon failure, an error number
 /// is returned to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigwait(set: *const sigset_t, sig: *mut c_int) -> c_int {
     let mut pinfo = mem::MaybeUninit::<siginfo_t>::uninit();
     if unsafe { sigtimedwait(set, pinfo.as_mut_ptr(), ptr::null_mut()) } < 0 {
@@ -790,7 +790,7 @@ pub unsafe extern "C" fn sigwait(set: *const sigset_t, sig: *mut c_int) -> c_int
 ///
 /// # Safety
 /// If `timeout` is the null pointer, behaviour is unspecified.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigtimedwait(
     set: *const sigset_t,
     // s/siginfo_t/siginfo due to https://github.com/mozilla/cbindgen/issues/621
@@ -811,7 +811,7 @@ pub unsafe extern "C" fn sigtimedwait(
 ///
 /// Upon success, returns the selected signal number. Upon failure, returns
 /// `-1` and sets errno to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sigwaitinfo(set: *const sigset_t, sig: *mut siginfo_t) -> c_int {
     unsafe { sigtimedwait(set, sig, core::ptr::null()) }
 }
@@ -855,7 +855,7 @@ pub(crate) const SIGNAL_STRINGS: [&str; 32] = [
 ///
 /// Writes a language-dependent message associated with a signal number to the
 /// standard error stream.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn psignal(sig: c_int, prefix: *const c_char) {
     let c_description = usize::try_from(sig)
         .ok()
@@ -885,7 +885,7 @@ pub unsafe extern "C" fn psignal(sig: c_int, prefix: *const c_char) {
 ///
 /// # Implementation
 /// Calls `psignal()` internally.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn psiginfo(info: *const siginfo_t, prefix: *const c_char) {
     unsafe {
         psignal((*info).si_signo, prefix);

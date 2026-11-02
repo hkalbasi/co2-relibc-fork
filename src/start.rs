@@ -71,7 +71,7 @@ unsafe fn copy_string_array(array: *const *const c_char, len: usize) -> Vec<*mut
 
 // Since Redox and Linux are so similar, it is easy to accidentally run a binary from one on the
 // other. This will test that the current system is compatible with the current binary
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe fn relibc_verify_host() {
     if !Sys::verify() {
         std::process::abort();
@@ -84,7 +84,7 @@ static INIT_ARRAY: [extern "C" fn(); 1] = [init_array];
 static mut INIT_COMPLETE: bool = false;
 
 #[used]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static mut __relibc_init_environ: *mut *mut c_char = ptr::null_mut();
 
 extern "C" fn init_array() {
@@ -127,7 +127,7 @@ fn io_init() {
 }
 
 #[inline(never)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn relibc_start_v1(
     sp: &'static Stack,
     main: unsafe extern "C" fn(

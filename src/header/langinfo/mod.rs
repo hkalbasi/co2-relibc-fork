@@ -200,7 +200,7 @@ pub const ABALTMON_12: nl_item = 80;
 /// - Caller must ensure `item` is a valid `nl_item` index.
 /// - Returns a pointer to a null-terminated string, or an empty string if the item is invalid.
 /// - Compatibility requires mutable pointer to be returned, but it should not be mutated!
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn nl_langinfo(item: nl_item) -> *mut c_char {
     // Validate the item and perform the lookup
     let ptr = if item < STRING_TABLE.len() {
@@ -221,7 +221,7 @@ pub unsafe extern "C" fn nl_langinfo(item: nl_item) -> *mut c_char {
 /// - Caller must ensure `item` is a valid `nl_item` index.
 /// - Returns a pointer to a null-terminated string, or an empty string if the item is invalid.
 /// - Compatibility requires mutable pointer to be returned, but it should not be mutated!
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn nl_langinfo_l(item: nl_item, _loc: locale_t) -> *mut c_char {
     unsafe { nl_langinfo(item) }
 }

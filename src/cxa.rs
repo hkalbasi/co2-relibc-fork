@@ -21,7 +21,7 @@ static CXA_ATEXIT_FUNCS: Mutex<Vec<Option<CxaAtExitFunc>>> = Mutex::new(Vec::new
 #[thread_local]
 static DTORS: RefCell<Vec<CxaThreadAtExitFunc>> = RefCell::new(Vec::new());
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn __cxa_atexit(
     func: Option<extern "C" fn(*mut c_void)>,
     arg: *mut c_void,
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn __cxa_atexit(
     0
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn __cxa_finalize(dso: *mut c_void) {
     let mut funcs = CXA_ATEXIT_FUNCS.lock();
 
@@ -74,7 +74,7 @@ pub unsafe extern "C" fn __cxa_finalize(dso: *mut c_void) {
     }
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn __cxa_thread_atexit_impl(
     func: extern "C" fn(*mut c_void),
     obj: *mut c_void,
@@ -92,12 +92,12 @@ pub unsafe fn __cxa_thread_finalize() {
     }
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn _ITM_deregisterTMCloneTable(_ptr: *mut c_void) {
     // No-op
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn _ITM_registerTMCloneTable(_ptr: *mut c_void, _len: usize) {
     // No-op
 }

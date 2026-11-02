@@ -45,7 +45,7 @@ const LONG_MONTHS: [&str; 12] = [
 ];
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strptime.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strptime(
     buf: *const c_char,
     format: *const c_char,

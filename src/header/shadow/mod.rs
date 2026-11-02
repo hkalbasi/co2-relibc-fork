@@ -188,7 +188,7 @@ fn parse_spwd(line: String, destbuf: Option<DestBuffer>) -> Result<OwnedSpwd, Er
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getspnam.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getspnam(name: *const c_char) -> *mut spwd {
     let Ok(db) = File::open(SHADOW_FILE.into(), fcntl::O_RDONLY) else {
         return ptr::null_mut();
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn getspnam(name: *const c_char) -> *mut spwd {
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getspnam.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getspnam_r(
     name: *const c_char,
     result_buf: *mut spwd,
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn getspnam_r(
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getspnam.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn setspent() {
     let line_reader = unsafe { &mut *LINE_READER.get() };
     if let Ok(db) = File::open(SHADOW_FILE.into(), fcntl::O_RDONLY) {
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn setspent() {
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getspnam.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn endspent() {
     unsafe {
         *LINE_READER.get() = None;
@@ -263,7 +263,7 @@ pub unsafe extern "C" fn endspent() {
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getspnam.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getspent() -> *mut spwd {
     let line_reader = unsafe { &mut *LINE_READER.get() };
     if line_reader.is_none() {

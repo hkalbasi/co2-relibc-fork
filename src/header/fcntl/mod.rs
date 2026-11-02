@@ -61,7 +61,7 @@ pub const F_UNLCK: c_int = 2;
 // }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/creat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn creat(path: *const c_char, mode: mode_t) -> c_int {
     unsafe { open(path, O_WRONLY | O_CREAT | O_TRUNC, mode) }
 }
@@ -111,7 +111,7 @@ pub struct flock {
 /// - `F_SETOWN_EX`: Value other than `-1`.
 ///
 /// Otherwise, `-1` shall be returned and errno set to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn fcntl(fildes: c_int, cmd: c_int, mut __valist: ...) -> c_int {
     // c_ulonglong
     let arg = match cmd {
@@ -131,7 +131,7 @@ pub unsafe extern "C" fn fcntl(fildes: c_int, cmd: c_int, mut __valist: ...) -> 
 /// representing the file descriptor. Upon failure, returns `-1` and sets errno
 /// to indicate the error. If `-1` is returned, no files shall be created or
 /// modified.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn open(path: *const c_char, oflag: c_int, mut __valist: ...) -> c_int {
     let mode = if oflag & O_CREAT == O_CREAT
     /* || oflag & O_TMPFILE == O_TMPFILE */
@@ -156,7 +156,7 @@ pub unsafe extern "C" fn open(path: *const c_char, oflag: c_int, mut __valist: .
 /// representing the file descriptor. Upon failure, returns `-1` and sets errno
 /// to indicate the error. If `-1` is returned, no files shall be created or
 /// modified.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn openat(
     fd: c_int,
     path: *const c_char,
@@ -182,7 +182,7 @@ pub unsafe extern "C" fn openat(
 /// storage media.
 ///
 /// Upon success, returns `0`. Upon failure, returns error number.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_fallocate(fd: c_int, offset: off_t, len: off_t) -> c_int {
     // Length can't be zero and offset must be positive.
     let Ok(offset) = offset.try_into() else {

@@ -72,13 +72,13 @@ fn rng_sampler() -> &'static Uniform<c_int> {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/_Exit.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn _Exit(status: c_int) -> ! {
     unistd::_exit(status);
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/a64l.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn a64l(s: *const c_char) -> c_long {
     // Early return upon null pointer argument
     if s.is_null() {
@@ -116,33 +116,33 @@ pub unsafe extern "C" fn a64l(s: *const c_char) -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/abort.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn abort() -> ! {
     log::error!("Abort");
     std::process::abort();
 }
 
 #[cfg(not(target_pointer_width = "64"))]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static __stack_chk_guard: uintptr_t = 0x19fcadfe;
 
 #[cfg(target_pointer_width = "64")]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static __stack_chk_guard: uintptr_t = 0xd048c37519fcadfe;
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 unsafe extern "C" fn __stack_chk_fail() -> ! {
     unsafe { abort() };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/abs.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn abs(i: c_int) -> c_int {
     i.abs()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/aligned_alloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn aligned_alloc(alignment: size_t, size: size_t) -> *mut c_void {
     if alignment == 0 || !size.is_multiple_of(alignment) {
         platform::ERRNO.set(EINVAL);
@@ -157,7 +157,7 @@ pub unsafe extern "C" fn aligned_alloc(alignment: size_t, size: size_t) -> *mut 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/at_quick_exit.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn at_quick_exit(func: Option<extern "C" fn()>) -> c_int {
     for i in 0..unsafe { AT_QUICK_EXIT_FUNCS.unsafe_ref().len() } {
         if unsafe { AT_QUICK_EXIT_FUNCS.unsafe_ref() }[i].is_none() {
@@ -170,7 +170,7 @@ pub unsafe extern "C" fn at_quick_exit(func: Option<extern "C" fn()>) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/atexit.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn atexit(func: Option<extern "C" fn()>) -> c_int {
     for i in 0..unsafe { ATEXIT_FUNCS.unsafe_ref().len() } {
         if unsafe { ATEXIT_FUNCS.unsafe_ref() }[i].is_none() {
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn atexit(func: Option<extern "C" fn()>) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/atof.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn atof(s: *const c_char) -> c_double {
     unsafe { strtod(s, ptr::null_mut()) }
 }
@@ -221,19 +221,19 @@ macro_rules! dec_num_from_ascii {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/atoi.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn atoi(s: *const c_char) -> c_int {
     dec_num_from_ascii!(s, c_int)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/atol.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn atol(s: *const c_char) -> c_long {
     dec_num_from_ascii!(s, c_long)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/atol.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn atoll(s: *const c_char) -> c_longlong {
     dec_num_from_ascii!(s, c_longlong)
 }
@@ -243,7 +243,7 @@ unsafe extern "C" fn void_cmp(a: *const c_void, b: *const c_void) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/bsearch.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn bsearch(
     key: *const c_void,
     base: *const c_void,
@@ -269,7 +269,7 @@ pub unsafe extern "C" fn bsearch(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/calloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn calloc(nelem: size_t, elsize: size_t) -> *mut c_void {
     //Handle possible integer overflow in size calculation
     match nelem.checked_mul(elsize) {
@@ -298,7 +298,7 @@ pub struct div_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/div.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn div(numer: c_int, denom: c_int) -> div_t {
     div_t {
         quot: numer / denom,
@@ -311,7 +311,7 @@ pub extern "C" fn div(numer: c_int, denom: c_int) -> div_t {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn drand48() -> c_double {
     let params = rand48::params();
     let mut xsubi = rand48::xsubi_lock();
@@ -344,7 +344,7 @@ pub extern "C" fn ecvt(
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn erand48(xsubi: *mut c_ushort) -> c_double {
     let params = rand48::params();
     let xsubi_mut: &mut [c_ushort; 3] =
@@ -355,7 +355,7 @@ pub unsafe extern "C" fn erand48(xsubi: *mut c_ushort) -> c_double {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/exit.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn exit(status: c_int) -> ! {
     unsafe extern "C" {
         static __fini_array_start: extern "C" fn();
@@ -402,7 +402,7 @@ pub extern "C" fn fcvt(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/free.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn free(ptr: *mut c_void) {
     unsafe { platform::free(ptr) };
 }
@@ -458,7 +458,7 @@ pub unsafe extern "C" fn getenv(name: *const c_char) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getsubopt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getsubopt(
     optionp: *mut *mut c_char,
     keylistp: *const *mut c_char,
@@ -514,7 +514,7 @@ pub unsafe extern "C" fn getsubopt(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/grantpt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn grantpt(fildes: c_int) -> c_int {
     // No-op on Linux and Redox
     0
@@ -522,7 +522,7 @@ pub extern "C" fn grantpt(fildes: c_int) -> c_int {
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/initstate.html>.
 // Ported from musl
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn initstate(seed: c_uint, state: *mut c_char, size: size_t) -> *mut c_char {
     if size < 8 {
         ptr::null_mut()
@@ -555,7 +555,7 @@ pub unsafe extern "C" fn initstate(seed: c_uint, state: *mut c_char, size: size_
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn jrand48(xsubi: *mut c_ushort) -> c_long {
     let params = rand48::params();
     let xsubi_mut: &mut [c_ushort; 3] = unsafe { slice::from_raw_parts_mut(xsubi, 3) }
@@ -567,7 +567,7 @@ pub unsafe extern "C" fn jrand48(xsubi: *mut c_ushort) -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/a64l.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn l64a(value: c_long) -> *mut c_char {
     // POSIX says we should only consider the lower 32 bits of value.
     let value_as_i32 = value as i32;
@@ -607,7 +607,7 @@ pub unsafe extern "C" fn l64a(value: c_long) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/labs.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn labs(i: c_long) -> c_long {
     i.abs()
 }
@@ -621,7 +621,7 @@ pub extern "C" fn labs(i: c_long) -> c_long {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn lcong48(param: *mut c_ushort) {
     let mut xsubi = rand48::xsubi_lock();
     let mut params = rand48::params_mut();
@@ -644,7 +644,7 @@ pub struct ldiv_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ldiv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn ldiv(numer: c_long, denom: c_long) -> ldiv_t {
     ldiv_t {
         quot: numer / denom,
@@ -653,7 +653,7 @@ pub extern "C" fn ldiv(numer: c_long, denom: c_long) -> ldiv_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/labs.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn llabs(i: c_longlong) -> c_longlong {
     i.abs()
 }
@@ -666,7 +666,7 @@ pub struct lldiv_t {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/ldiv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn lldiv(numer: c_longlong, denom: c_longlong) -> lldiv_t {
     lldiv_t {
         quot: numer / denom,
@@ -679,7 +679,7 @@ pub extern "C" fn lldiv(numer: c_longlong, denom: c_longlong) -> lldiv_t {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn lrand48() -> c_long {
     let params = rand48::params();
     let mut xsubi = rand48::xsubi_lock();
@@ -688,7 +688,7 @@ pub extern "C" fn lrand48() -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/malloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn malloc(size: size_t) -> *mut c_void {
     let ptr = unsafe { platform::alloc(size) };
     if ptr.is_null() {
@@ -699,7 +699,7 @@ pub unsafe extern "C" fn malloc(size: size_t) -> *mut c_void {
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/posix_memalign.3.html>.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn memalign(alignment: size_t, size: size_t) -> *mut c_void {
     if alignment.is_power_of_two() {
         let ptr = unsafe { platform::alloc_align(size, alignment) };
@@ -714,7 +714,7 @@ pub unsafe extern "C" fn memalign(alignment: size_t, size: size_t) -> *mut c_voi
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mblen.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mblen(s: *const c_char, n: size_t) -> c_int {
     let mut wc: wchar_t = 0;
     let mut state: mbstate_t = mbstate_t {};
@@ -731,14 +731,14 @@ pub unsafe extern "C" fn mblen(s: *const c_char, n: size_t) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbstowcs.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mbstowcs(pwcs: *mut wchar_t, mut s: *const c_char, n: size_t) -> size_t {
     let mut state: mbstate_t = mbstate_t {};
     unsafe { mbsrtowcs(pwcs, &raw mut s, n, &raw mut state) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mbtowc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mbtowc(pwc: *mut wchar_t, s: *const c_char, n: size_t) -> c_int {
     let mut state: mbstate_t = mbstate_t {};
     (unsafe { mbrtowc(pwc, s, n, &raw mut state) }) as c_int
@@ -796,7 +796,7 @@ fn get_nstime() -> u64 {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkdtemp.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkdtemp(name: *mut c_char) -> *mut c_char {
     inner_mktemp(name, 0, || {
         let name_c = unsafe { CStr::from_ptr(name) };
@@ -809,13 +809,13 @@ pub unsafe extern "C" fn mkdtemp(name: *mut c_char) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkdtemp.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkostemp(name: *mut c_char, flags: c_int) -> c_int {
     unsafe { mkostemps(name, 0, flags) }
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/mkstemp.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkostemps(
     name: *mut c_char,
     suffix_len: c_int,
@@ -836,13 +836,13 @@ pub unsafe extern "C" fn mkostemps(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkdtemp.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkstemp(name: *mut c_char) -> c_int {
     unsafe { mkostemps(name, 0, 0) }
 }
 
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/mkstemp.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkstemps(name: *mut c_char, suffix_len: c_int) -> c_int {
     unsafe { mkostemps(name, suffix_len, 0) }
 }
@@ -853,7 +853,7 @@ pub unsafe extern "C" fn mkstemps(name: *mut c_char, suffix_len: c_int) -> c_int
 /// The `mktemp()` function was marked as legacy in the Open Group Base
 /// Specifications Issue 6, and the function was removed in Issue 7.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mktemp(name: *mut c_char) -> *mut c_char {
     if inner_mktemp(name, 0, || {
         let name = unsafe { CStr::from_ptr(name) };
@@ -875,7 +875,7 @@ pub unsafe extern "C" fn mktemp(name: *mut c_char) -> *mut c_char {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn mrand48() -> c_long {
     let params = rand48::params();
     let mut xsubi = rand48::xsubi_lock();
@@ -892,7 +892,7 @@ pub extern "C" fn mrand48() -> c_long {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn nrand48(xsubi: *mut c_ushort) -> c_long {
     let params = rand48::params();
     let xsubi_mut: &mut [c_ushort; 3] = unsafe { slice::from_raw_parts_mut(xsubi, 3) }
@@ -904,7 +904,7 @@ pub unsafe extern "C" fn nrand48(xsubi: *mut c_ushort) -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/posix_memalign.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_memalign(
     memptr: *mut *mut c_void,
     alignment: size_t,
@@ -923,7 +923,7 @@ pub unsafe extern "C" fn posix_memalign(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/posix_openpt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_openpt(flags: c_int) -> c_int {
     #[cfg(target_os = "redox")]
     let r = unsafe { open(c"/scheme/pty/ptmx".as_ptr(), flags) };
@@ -952,7 +952,7 @@ pub unsafe extern "C" fn posix_openpt(flags: c_int) -> c_int {
 ///   overwritten by a subsequent call to `ptsname()`.
 /// - The returned pointer and string content might be invalidated if the
 ///   calling thread is terminated.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn ptsname(fildes: c_int) -> *mut c_char {
     const PTS_BUFFER_LEN: usize = limits::TTY_NAME_MAX as usize;
     static mut PTS_BUFFER: [c_char; PTS_BUFFER_LEN] = [0; PTS_BUFFER_LEN];
@@ -974,7 +974,7 @@ pub unsafe extern "C" fn ptsname(fildes: c_int) -> *mut c_char {
 ///
 /// Upon success, returns `0`. Upon failure, an error number is returned to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn ptsname_r(fildes: c_int, name: *mut c_char, namesize: size_t) -> c_int {
     if name.is_null() {
         EINVAL
@@ -1030,7 +1030,7 @@ unsafe fn put_new_env(insert: *mut c_char) {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/putenv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn putenv(insert: *mut c_char) -> c_int {
     assert_ne!(insert, ptr::null_mut(), "putenv(NULL)");
     if let Some((i, _)) = unsafe { find_env(insert) } {
@@ -1045,7 +1045,7 @@ pub unsafe extern "C" fn putenv(insert: *mut c_char) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/qsort.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn qsort(
     base: *mut c_void,
     nel: size_t,
@@ -1064,7 +1064,7 @@ pub unsafe extern "C" fn qsort(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/qsort_r.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn qsort_r(
     base: *mut c_void,
     nel: size_t,
@@ -1079,7 +1079,7 @@ pub unsafe extern "C" fn qsort_r(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/quick_exit.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn quick_exit(status: c_int) -> ! {
     for i in (0..unsafe { AT_QUICK_EXIT_FUNCS.unsafe_ref() }.len()).rev() {
         if let Some(func) = unsafe { AT_QUICK_EXIT_FUNCS.unsafe_ref() }[i] {
@@ -1091,7 +1091,7 @@ pub unsafe extern "C" fn quick_exit(status: c_int) -> ! {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/rand.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn rand() -> c_int {
     unsafe {
         match RNG {
@@ -1112,7 +1112,7 @@ pub unsafe extern "C" fn rand() -> c_int {
 /// The `rand_r()` function was marked as obsolescent in the Open Group Base
 /// Specifications Issue 7, and the function was removed in Issue 8.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn rand_r(seed: *mut c_uint) -> c_int {
     if seed.is_null() {
         errno::EINVAL
@@ -1131,7 +1131,7 @@ pub unsafe extern "C" fn rand_r(seed: *mut c_uint) -> c_int {
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/initstate.html>.
 // Ported from musl
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn random() -> c_long {
     let mut random_state = random::state_lock();
 
@@ -1175,7 +1175,7 @@ pub unsafe extern "C" fn random() -> c_long {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/realloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn realloc(ptr: *mut c_void, size: size_t) -> *mut c_void {
     let new_ptr = unsafe { platform::realloc(ptr, size) };
     if new_ptr.is_null() {
@@ -1185,7 +1185,7 @@ pub unsafe extern "C" fn realloc(ptr: *mut c_void, size: size_t) -> *mut c_void 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/realloc.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn reallocarray(ptr: *mut c_void, m: size_t, n: size_t) -> *mut c_void {
     //Handle possible integer overflow in size calculation
     match m.checked_mul(n) {
@@ -1199,7 +1199,7 @@ pub unsafe extern "C" fn reallocarray(ptr: *mut c_void, m: size_t, n: size_t) ->
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/realpath.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn realpath(pathname: *const c_char, resolved: *mut c_char) -> *mut c_char {
     let ptr = if resolved.is_null() {
         (unsafe { malloc(limits::PATH_MAX) }).cast::<c_char>()
@@ -1244,7 +1244,7 @@ pub unsafe extern "C" fn secure_getenv(name: *const c_char) -> *mut c_char {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn seed48(seed16v: *mut c_ushort) -> *mut c_ushort {
     static RETURN_BUFFER: RawCell<[c_ushort; 3]> = RawCell::new([0; 3]);
 
@@ -1280,7 +1280,7 @@ unsafe fn copy_kv(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/setenv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn setenv(
     key: *const c_char,
     value: *const c_char,
@@ -1334,7 +1334,7 @@ pub unsafe extern "C" fn setkey(key: *const c_char) {
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/initstate.html>.
 // Ported from musl. The state parameter is no longer const in newer versions of POSIX.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn setstate(state: *mut c_char) -> *mut c_char {
     let mut random_state = random::state_lock();
 
@@ -1345,7 +1345,7 @@ pub unsafe extern "C" fn setstate(state: *mut c_char) -> *mut c_char {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/rand.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn srand(seed: c_uint) {
     unsafe { RNG = Some(XorShiftRng::from_seed([seed as u8; 16])) };
 }
@@ -1355,7 +1355,7 @@ pub unsafe extern "C" fn srand(seed: c_uint) {
 /// # Panics
 /// Panics if the function is unable to obtain a lock on the generator's global
 /// state.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn srand48(seedval: c_long) {
     let mut params = rand48::params_mut();
     let mut xsubi = rand48::xsubi_lock();
@@ -1371,7 +1371,7 @@ pub extern "C" fn srand48(seedval: c_long) {
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/initstate.html>.
 // Ported from musl
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn srandom(seed: c_uint) {
     let mut random_state = random::state_lock();
 
@@ -1490,13 +1490,13 @@ pub unsafe fn convert_integer(s: *const c_char, base: c_int) -> Option<(c_ulong,
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strtod.html>.
 #[expect(clippy::cast_lossless)] // not all users of `strto_float_impl!` are lossless
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtod(s: *const c_char, endptr: *mut *mut c_char) -> c_double {
     strto_float_impl!(c_double, s, endptr)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/strtod.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtof(s: *const c_char, endptr: *mut *mut c_char) -> c_float {
     strto_float_impl!(c_float, s, endptr)
 }
@@ -1508,7 +1508,7 @@ pub unsafe extern "C" fn strtof(s: *const c_char, endptr: *mut *mut c_char) -> c
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtol(
     nptr: *const c_char,
     endptr: *mut *mut c_char,
@@ -1526,7 +1526,7 @@ pub unsafe extern "C" fn strtol(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtoll(
     nptr: *const c_char,
     endptr: *mut *mut c_char,
@@ -1550,7 +1550,7 @@ pub unsafe extern "C" fn strtoll(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtoul(
     str: *const c_char,
     endptr: *mut *mut c_char,
@@ -1574,7 +1574,7 @@ pub unsafe extern "C" fn strtoul(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtoull(
     str: *const c_char,
     endptr: *mut *mut c_char,
@@ -1592,7 +1592,7 @@ pub unsafe extern "C" fn strtoull(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/system.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn system(command: *const c_char) -> c_int {
     // TODO: rusty error handling?
     //TODO: share code with popen
@@ -1645,7 +1645,7 @@ pub extern "C" fn ttyslot() -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/unlockpt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn unlockpt(fildes: c_int) -> c_int {
     let mut u: c_int = 0;
     unsafe {
@@ -1658,7 +1658,7 @@ pub unsafe extern "C" fn unlockpt(fildes: c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/unsetenv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn unsetenv(key: *const c_char) -> c_int {
     if let Some((i, _)) = unsafe { find_env(key) } {
         if unsafe { platform::environ }
@@ -1697,7 +1697,7 @@ pub unsafe extern "C" fn unsetenv(key: *const c_char) -> c_int {
 /// The `valloc()` function was marked as obsolescent in the Open Group Base
 /// Specifications Issue 5, and the function was removed in Issue 6.
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn valloc(size: size_t) -> *mut c_void {
     /* sysconf(_SC_PAGESIZE) is a c_long and may in principle not
      * convert correctly to a size_t. */
@@ -1719,14 +1719,14 @@ pub unsafe extern "C" fn valloc(size: size_t) -> *mut c_void {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wcstombs.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wcstombs(s: *mut c_char, mut pwcs: *const wchar_t, n: size_t) -> size_t {
     let mut state: mbstate_t = mbstate_t {};
     unsafe { wcsrtombs(s, &raw mut pwcs, n, &raw mut state) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/wctomb.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wctomb(s: *mut c_char, wc: wchar_t) -> c_int {
     let mut state: mbstate_t = mbstate_t {};
     let result: usize = unsafe { wcrtomb(s, wc, &raw mut state) };

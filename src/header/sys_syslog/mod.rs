@@ -69,19 +69,19 @@ pub const LOG_INFO: c_int = 6;
 pub const LOG_DEBUG: c_int = 7;
 
 /// Create a mask that includes all levels up to a certain priority.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub const extern "C" fn LOG_UPTO(p: c_int) -> c_int {
     (1 << (p + 1)) - 1
 }
 
 /// Create a mask that enables a single priority.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub const extern "C" fn LOG_MASK(p: c_int) -> c_int {
     1 << p
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/closelog.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn setlogmask(mask: c_int) -> c_int {
     let mut params = LOGGER.lock();
     let old = params.mask.bits();
@@ -94,7 +94,7 @@ pub extern "C" fn setlogmask(mask: c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/closelog.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn openlog(ident: *const c_char, opt: c_int, facility: c_int) {
     let ident = unsafe { CStr::from_nullable_ptr(ident) };
     let conf = logger::Config::from_bits_truncate(opt);
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn openlog(ident: *const c_char, opt: c_int, facility: c_i
 /// See <https://www.man7.org/linux/man-pages/man3/vsyslog.3.html>.
 ///
 /// Non-POSIX, 4.3BSD-Reno.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn vsyslog(priority: c_int, message: *const c_char, ap: VaList) {
     let Some(message) = (unsafe { CStr::from_nullable_ptr(message) }) else {
         return;
@@ -134,13 +134,13 @@ pub unsafe extern "C" fn vsyslog(priority: c_int, message: *const c_char, ap: Va
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/closelog.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn syslog(priority: c_int, message: *const c_char, __valist: ...) {
     unsafe { vsyslog(priority, message, __valist) };
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/closelog.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn closelog() {
     LOGGER.lock().close();
 }

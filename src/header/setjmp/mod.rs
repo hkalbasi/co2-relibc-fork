@@ -37,7 +37,7 @@ unsafe extern "C" {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/siglongjmp.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn siglongjmp(env: *mut c_ulonglong, val: c_int) {
     unsafe { longjmp(env, val) };
 }

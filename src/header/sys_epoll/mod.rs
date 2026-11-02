@@ -119,7 +119,7 @@ pub struct epoll_event {
 /// # Implementation
 /// The `_size` parameter is deliberately unused as it is no longer required.
 /// This function simply calls `epoll_create1`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn epoll_create(_size: c_int) -> c_int {
     epoll_create1(0)
 }
@@ -130,7 +130,7 @@ pub extern "C" fn epoll_create(_size: c_int) -> c_int {
 ///
 /// Upon success, returns a file descriptor (a nonnegative integer). Upon
 /// error, `-1` is returned and errno set to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn epoll_create1(flags: c_int) -> c_int {
     trace_expr!(
         Sys::epoll_create1(flags).or_minus_one_errno(),
@@ -146,7 +146,7 @@ pub extern "C" fn epoll_create1(flags: c_int) -> c_int {
 ///
 /// Upon success, returns `0`. Upon error, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn epoll_ctl(
     epfd: c_int,
     op: c_int,
@@ -185,7 +185,7 @@ pub unsafe extern "C" fn epoll_ctl(
 /// requested I/O operation, or `0` if no file descriptor became ready during
 /// the requested `timeout`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn epoll_wait(
     epfd: c_int,
     events: *mut epoll_event,
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn epoll_wait(
 /// requested I/O operation, or `0` if no file descriptor became ready during
 /// the requested `timeout`. Upon failure, returns `-1` and sets errno to
 /// indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn epoll_pwait(
     epfd: c_int,
     events: *mut epoll_event,

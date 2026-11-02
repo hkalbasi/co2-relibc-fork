@@ -17,7 +17,7 @@ use crate::{
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/imaxabs.html>.
 ///
 /// Computes the absolute value of the integer `j`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn imaxabs(j: intmax_t) -> intmax_t {
     j.abs()
 }
@@ -39,7 +39,7 @@ pub struct imaxdiv_t {
 /// Computes `numer` / `denom` and `numer` % `denom` in a single operation.
 ///
 /// Returns the struct `imaxdiv_t`, comprising both the quotient and remainder.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn imaxdiv(numer: intmax_t, denom: intmax_t) -> imaxdiv_t {
     imaxdiv_t {
         quot: numer / denom,
@@ -54,7 +54,7 @@ pub extern "C" fn imaxdiv(numer: intmax_t, denom: intmax_t) -> imaxdiv_t {
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtoimax(
     nptr: *const c_char,
     endptr: *mut *mut c_char,
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn strtoimax(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed or the value of `base` is not supported, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn strtoumax(
     nptr: *const c_char,
     endptr: *mut *mut c_char,
@@ -103,7 +103,7 @@ pub unsafe extern "C" fn strtoumax(
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
 #[expect(clippy::cast_lossless)] // not all users of `wcsto_impl!` are lossless
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wcstoimax(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn wcstoimax(
 ///
 /// Upon success, returns the converted value. If no conversion could be
 /// performed, returns `0`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn wcstoumax(
     mut nptr: *const wchar_t,
     endptr: *mut *mut wchar_t,

@@ -74,7 +74,7 @@ pub struct Dl_info_t {
 pub type Dl_info = Dl_info_t;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dladdr.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn dladdr(_addr: *const c_void, info: *mut Dl_info_t) -> c_int {
     //TODO
     unsafe {
@@ -87,7 +87,7 @@ pub unsafe extern "C" fn dladdr(_addr: *const c_void, info: *mut Dl_info_t) -> c
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dlopen.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn dlopen(cfilename: *const c_char, flags: c_int) -> *mut c_void {
     //TODO support all sort of flags
     let resolve = if flags & RTLD_NOW == RTLD_NOW {
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn dlopen(cfilename: *const c_char, flags: c_int) -> *mut 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dlsym.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void {
     let handle = unsafe { handle.cast::<DSO>().as_ref() };
 
@@ -172,7 +172,7 @@ pub unsafe extern "C" fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *m
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dlclose.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn dlclose(handle: *mut c_void) -> c_int {
     let Some(tcb) = (unsafe { Tcb::current() }) else {
         ERROR.store(ERROR_NOT_SUPPORTED.as_ptr() as usize, Ordering::SeqCst);
@@ -196,7 +196,7 @@ pub unsafe extern "C" fn dlclose(handle: *mut c_void) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/dlerror.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn dlerror() -> *mut c_char {
     ERROR.swap(0, Ordering::SeqCst) as *mut c_char
 }

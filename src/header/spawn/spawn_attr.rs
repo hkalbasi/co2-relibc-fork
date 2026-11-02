@@ -55,7 +55,7 @@ pub struct posix_spawnattr_t {
 ///
 /// # Panics
 /// Panics if `attr` is `NULL`.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn posix_spawnattr_init(attr: *mut posix_spawnattr_t) -> c_int {
     unsafe {
         let attr = attr.as_mut().expect("posix_spawnattr_t cannot be NULL");
@@ -76,7 +76,7 @@ pub extern "C" fn posix_spawnattr_init(attr: *mut posix_spawnattr_t) -> c_int {
 /// # Safety
 /// `attr` must be a pointer to `posix_spawnattr_t` and must at least be
 /// initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_destroy(attr: *mut posix_spawnattr_t) -> c_int {
     unsafe {
         // TODO should we be returning EINVAL when `attr` is invalid?
@@ -98,7 +98,7 @@ pub unsafe extern "C" fn posix_spawnattr_destroy(attr: *mut posix_spawnattr_t) -
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setschedparam(
     attr: *mut posix_spawnattr_t,
     schedparam: *const sched_param,
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn posix_spawnattr_setschedparam(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getschedparam(
     attr: *const posix_spawnattr_t,
     schedparam: *mut sched_param,
@@ -148,7 +148,7 @@ pub unsafe extern "C" fn posix_spawnattr_getschedparam(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setschedpolicy(
     attr: *mut posix_spawnattr_t,
     schedpolicy: c_int,
@@ -176,7 +176,7 @@ pub unsafe extern "C" fn posix_spawnattr_setschedpolicy(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getschedpolicy(
     attr: *const posix_spawnattr_t,
     schedpolicy: *mut c_int,
@@ -199,7 +199,7 @@ pub unsafe extern "C" fn posix_spawnattr_getschedpolicy(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setsigdefault(
     attr: *mut posix_spawnattr_t,
     sigdefault: *const sigset_t,
@@ -224,7 +224,7 @@ pub unsafe extern "C" fn posix_spawnattr_setsigdefault(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getsigdefault(
     attr: *const posix_spawnattr_t,
     sigdefault: *mut sigset_t,
@@ -247,7 +247,7 @@ pub unsafe extern "C" fn posix_spawnattr_getsigdefault(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setsigmask(
     attr: *mut posix_spawnattr_t,
     sigmask: *const sigset_t,
@@ -272,7 +272,7 @@ pub unsafe extern "C" fn posix_spawnattr_setsigmask(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getsigmask(
     attr: *const posix_spawnattr_t,
     sigmask: *mut sigset_t,
@@ -295,7 +295,7 @@ pub unsafe extern "C" fn posix_spawnattr_getsigmask(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setflags(
     attr: *mut posix_spawnattr_t,
     flags: c_short,
@@ -325,7 +325,7 @@ pub unsafe extern "C" fn posix_spawnattr_setflags(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getflags(
     attr: *const posix_spawnattr_t,
     flags: *mut c_short,
@@ -349,7 +349,7 @@ pub unsafe extern "C" fn posix_spawnattr_getflags(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_setpgroup(
     attr: *mut posix_spawnattr_t,
     pgroup: pid_t,
@@ -373,7 +373,7 @@ pub unsafe extern "C" fn posix_spawnattr_setpgroup(
 ///
 /// # Safety
 /// `attr` must be initialised.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn posix_spawnattr_getpgroup(
     attr: *const posix_spawnattr_t,
     pgroup: *mut pid_t,

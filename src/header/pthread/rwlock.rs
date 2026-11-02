@@ -5,7 +5,7 @@ use crate::header::errno::{EBUSY, EINVAL};
 use crate::{header::time::CLOCK_REALTIME, pthread::Pshared};
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_init.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_init(
     rwlock: *mut pthread_rwlock_t,
     attr: *const pthread_rwlockattr_t,
@@ -23,7 +23,7 @@ pub unsafe extern "C" fn pthread_rwlock_init(
     0
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_rdlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_rdlock(rwlock: *mut pthread_rwlock_t) -> c_int {
     match unsafe { get(rwlock) }.acquire_read_lock(None) {
         Ok(()) => 0,
@@ -31,7 +31,7 @@ pub unsafe extern "C" fn pthread_rwlock_rdlock(rwlock: *mut pthread_rwlock_t) ->
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_clockrdlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_clockrdlock(
     rwlock: *mut pthread_rwlock_t,
     clock_id: clockid_t,
@@ -43,7 +43,7 @@ pub unsafe extern "C" fn pthread_rwlock_clockrdlock(
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_timedrdlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_timedrdlock(
     rwlock: *mut pthread_rwlock_t,
     abstime: *const timespec,
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn pthread_rwlock_timedrdlock(
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_clockwrlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_clockwrlock(
     rwlock: *mut pthread_rwlock_t,
     clock_id: clockid_t,
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn pthread_rwlock_clockwrlock(
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_timedwrlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_timedwrlock(
     rwlock: *mut pthread_rwlock_t,
     abstime: *const timespec,
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn pthread_rwlock_timedwrlock(
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_tryrdlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_tryrdlock(rwlock: *mut pthread_rwlock_t) -> c_int {
     match unsafe { get(rwlock) }.try_acquire_read_lock() {
         Ok(()) => 0,
@@ -85,7 +85,7 @@ pub unsafe extern "C" fn pthread_rwlock_tryrdlock(rwlock: *mut pthread_rwlock_t)
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_trywrlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_trywrlock(rwlock: *mut pthread_rwlock_t) -> c_int {
     match unsafe { get(rwlock) }.try_acquire_write_lock() {
         Ok(()) => 0,
@@ -93,14 +93,14 @@ pub unsafe extern "C" fn pthread_rwlock_trywrlock(rwlock: *mut pthread_rwlock_t)
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_unlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_unlock(rwlock: *mut pthread_rwlock_t) -> c_int {
     unsafe { get(rwlock) }.unlock();
 
     0
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_wrlock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_wrlock(rwlock: *mut pthread_rwlock_t) -> c_int {
     match unsafe { get(rwlock) }.acquire_write_lock(None) {
         Ok(()) => 0,
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn pthread_rwlock_wrlock(rwlock: *mut pthread_rwlock_t) ->
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlockattr_init.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlockattr_init(attr: *mut pthread_rwlockattr_t) -> c_int {
     unsafe {
         attr.cast::<RlctRwlockAttr>()
@@ -120,7 +120,7 @@ pub unsafe extern "C" fn pthread_rwlockattr_init(attr: *mut pthread_rwlockattr_t
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlockattr_getpshared.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlockattr_getpshared(
     attr: *const pthread_rwlockattr_t,
     pshared_out: *mut c_int,
@@ -131,7 +131,7 @@ pub unsafe extern "C" fn pthread_rwlockattr_getpshared(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlockattr_setpshared.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlockattr_setpshared(
     attr: *mut pthread_rwlockattr_t,
     pshared: c_int,
@@ -145,14 +145,14 @@ pub unsafe extern "C" fn pthread_rwlockattr_setpshared(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlockattr_destroy.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlockattr_destroy(attr: *mut pthread_rwlockattr_t) -> c_int {
     unsafe { core::ptr::drop_in_place(attr) };
 
     0
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_rwlock_destroy.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_rwlock_destroy(rwlock: *mut pthread_rwlock_t) -> c_int {
     unsafe { core::ptr::drop_in_place(rwlock) };
 

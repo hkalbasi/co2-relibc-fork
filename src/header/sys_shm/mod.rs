@@ -49,7 +49,7 @@ struct ShmHeader {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shmget.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn shmget(key: key_t, size: size_t, shmflg: c_int) -> c_int {
     let path_str = if key == IPC_PRIVATE {
         format!("/sysv_priv_{}\0", Sys::getpid())
@@ -90,7 +90,7 @@ pub unsafe extern "C" fn shmget(key: key_t, size: size_t, shmflg: c_int) -> c_in
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shmat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn shmat(
     shmid: c_int,
     _shmaddr: *const c_void,
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn shmat(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shmdt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn shmdt(shmaddr: *const c_void) -> c_int {
     if shmaddr.is_null() || shmaddr == SHM_FAILED {
         return -1;
@@ -134,7 +134,7 @@ pub unsafe extern "C" fn shmdt(shmaddr: *const c_void) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shmctl.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn shmctl(shmid: c_int, cmd: c_int, buf: *mut shmid_ds) -> c_int {
     match cmd {
         IPC_RMID => Sys::close(shmid).map(|()| 0).or_minus_one_errno(),

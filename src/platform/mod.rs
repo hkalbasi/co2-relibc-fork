@@ -55,7 +55,7 @@ pub static mut program_invocation_name: *mut c_char = ptr::null_mut();
 pub static mut program_invocation_short_name: *mut c_char = ptr::null_mut();
 
 #[allow(non_upper_case_globals)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static mut environ: *mut *mut c_char = ptr::null_mut();
 
 pub static OUR_ENVIRON: RawCell<Vec<*mut c_char>> = RawCell::new(Vec::new());

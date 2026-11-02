@@ -8,7 +8,7 @@ use syscall::{F_SETFD, F_SETFL, O_RDONLY, O_WRONLY, error::*};
 
 pub use redox_rt::proc::FdGuard;
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn redox_fpath(fd: c_int, buf: *mut c_void, count: size_t) -> ssize_t {
     syscall::fpath(fd as usize, unsafe {
         slice::from_raw_parts_mut(buf.cast::<u8>(), count)

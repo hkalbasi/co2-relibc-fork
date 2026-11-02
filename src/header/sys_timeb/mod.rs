@@ -44,7 +44,7 @@ pub struct timeb {
 /// Issue 7.
 #[allow(deprecated)]
 #[deprecated]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn ftime(tp: *mut timeb) -> c_int {
     // SAFETY: the caller is required to ensure that the pointer is valid.
     let mut tp_out = unsafe { Out::nonnull(tp) };

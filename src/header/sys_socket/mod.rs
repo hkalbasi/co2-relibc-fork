@@ -114,13 +114,13 @@ pub unsafe extern "C" fn __MHDR_END(mhdr: *const msghdr) -> *mut c_uchar {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/sys_socket.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_DATA(cmsg: *const cmsghdr) -> *mut c_uchar {
     unsafe { (cmsg as *mut c_uchar).add(CMSG_ALIGN(mem::size_of::<cmsghdr>())) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/sys_socket.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_NXTHDR(mhdr: *const msghdr, cmsg: *const cmsghdr) -> *mut cmsghdr {
     if cmsg.is_null() {
         return unsafe { CMSG_FIRSTHDR(mhdr) };
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn CMSG_NXTHDR(mhdr: *const msghdr, cmsg: *const cmsghdr) 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/sys_socket.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_FIRSTHDR(mhdr: *const msghdr) -> *mut cmsghdr {
     unsafe {
         if (*mhdr).msg_controllen >= mem::size_of::<cmsghdr>() {
@@ -150,27 +150,27 @@ pub unsafe extern "C" fn CMSG_FIRSTHDR(mhdr: *const msghdr) -> *mut cmsghdr {
     }
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_ALIGN(len: size_t) -> size_t {
     (len + mem::size_of::<size_t>() - 1) & !(mem::size_of::<size_t>() - 1)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/sys_socket.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_SPACE(len: c_uint) -> c_uint {
     (unsafe { CMSG_ALIGN(len as size_t) } + unsafe { CMSG_ALIGN(mem::size_of::<cmsghdr>()) })
         as c_uint
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/sys_socket.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn CMSG_LEN(length: c_uint) -> c_uint {
     (unsafe { CMSG_ALIGN(mem::size_of::<cmsghdr>()) } + length as usize) as c_uint
 }
 // } These must match C macros in sys_socket/cbindgen.toml
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/accept.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn accept(
     socket: c_int,
     address: *mut sockaddr,
@@ -186,7 +186,7 @@ pub unsafe extern "C" fn accept(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/bind.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn bind(
     socket: c_int,
     address: *const sockaddr,
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn bind(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/connect.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn connect(
     socket: c_int,
     address: *const sockaddr,
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn connect(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getpeername.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getpeername(
     socket: c_int,
     address: *mut sockaddr,
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn getpeername(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getsockname.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getsockname(
     socket: c_int,
     address: *mut sockaddr,
@@ -256,7 +256,7 @@ pub unsafe extern "C" fn getsockname(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/getsockopt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getsockopt(
     socket: c_int,
     level: c_int,
@@ -278,7 +278,7 @@ pub unsafe extern "C" fn getsockopt(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/listen.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn listen(socket: c_int, backlog: c_int) -> c_int {
     Sys::listen(socket, backlog)
         .map(|()| 0)
@@ -286,7 +286,7 @@ pub unsafe extern "C" fn listen(socket: c_int, backlog: c_int) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/recv.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn recv(
     socket: c_int,
     buffer: *mut c_void,
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn recv(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/recvfrom.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn recvfrom(
     socket: c_int,
     buffer: *mut c_void,
@@ -330,7 +330,7 @@ pub unsafe extern "C" fn recvfrom(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/recvmsg.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn recvmsg(socket: c_int, msg: *mut msghdr, flags: c_int) -> ssize_t {
     unsafe { Sys::recvmsg(socket, msg, flags) }
         .map(|r| r as ssize_t)
@@ -338,7 +338,7 @@ pub unsafe extern "C" fn recvmsg(socket: c_int, msg: *mut msghdr, flags: c_int) 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/send.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn send(
     socket: c_int,
     message: *const c_void,
@@ -349,7 +349,7 @@ pub unsafe extern "C" fn send(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/sendmsg.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sendmsg(socket: c_int, msg: *const msghdr, flags: c_int) -> ssize_t {
     unsafe { Sys::sendmsg(socket, msg, flags) }
         .map(|w| w as ssize_t)
@@ -357,7 +357,7 @@ pub unsafe extern "C" fn sendmsg(socket: c_int, msg: *const msghdr, flags: c_int
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/sendto.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn sendto(
     socket: c_int,
     message: *const c_void,
@@ -381,7 +381,7 @@ pub unsafe extern "C" fn sendto(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/setsockopt.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn setsockopt(
     socket: c_int,
     level: c_int,
@@ -403,13 +403,13 @@ pub unsafe extern "C" fn setsockopt(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/shutdown.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn shutdown(socket: c_int, how: c_int) -> c_int {
     Sys::shutdown(socket, how).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/socket.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn socket(domain: c_int, kind: c_int, protocol: c_int) -> c_int {
     trace_expr!(
         unsafe { Sys::socket(domain, kind, protocol) }.or_minus_one_errno(),
@@ -421,7 +421,7 @@ pub unsafe extern "C" fn socket(domain: c_int, kind: c_int, protocol: c_int) -> 
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/socketpair.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn socketpair(
     domain: c_int,
     kind: c_int,

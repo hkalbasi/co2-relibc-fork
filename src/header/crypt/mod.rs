@@ -63,7 +63,7 @@ fn gen_salt() -> Option<String> {
 }
 
 /// See <https://www.man7.org/linux/man-pages/man3/crypt.3.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn crypt_r(
     key: *const c_char,
     setting: *const c_char,

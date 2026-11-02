@@ -119,20 +119,20 @@ pub struct stat {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/chmod.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn chmod(path: *const c_char, mode: mode_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::chmod(path, mode).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fchmod.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn fchmod(fildes: c_int, mode: mode_t) -> c_int {
     Sys::fchmod(fildes, mode).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fchmodat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn fchmodat(
     dirfd: c_int,
     path: *const c_char,
@@ -146,14 +146,14 @@ pub unsafe extern "C" fn fchmodat(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fstat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn fstat(fildes: c_int, buf: *mut stat) -> c_int {
     let buf = unsafe { Out::nonnull(buf) };
     Sys::fstat(fildes, buf).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/fstatat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn fstatat(
     fildes: c_int,
     path: *const c_char,
@@ -167,13 +167,13 @@ pub unsafe extern "C" fn fstatat(
         .or_minus_one_errno()
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn __fxstat(_ver: c_int, fildes: c_int, buf: *mut stat) -> c_int {
     unsafe { fstat(fildes, buf) }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/futimens.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn futimens(fd: c_int, times: *const timespec) -> c_int {
     unsafe { Sys::futimens(fd, times) }
         .map(|()| 0)
@@ -181,7 +181,7 @@ pub unsafe extern "C" fn futimens(fd: c_int, times: *const timespec) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/lstat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn lstat(path: *const c_char, buf: *mut stat) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     let buf = unsafe { Out::nonnull(buf) };
@@ -189,7 +189,7 @@ pub unsafe extern "C" fn lstat(path: *const c_char, buf: *mut stat) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkdirat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkdirat(dirfd: c_int, path: *const c_char, mode: mode_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::mkdirat(dirfd, path, mode)
@@ -198,14 +198,14 @@ pub unsafe extern "C" fn mkdirat(dirfd: c_int, path: *const c_char, mode: mode_t
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkdir.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkdir(path: *const c_char, mode: mode_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::mkdir(path, mode).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkfifoat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkfifoat(dirfd: c_int, path: *const c_char, mode: mode_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::mkfifoat(dirfd, path, mode)
@@ -214,21 +214,21 @@ pub unsafe extern "C" fn mkfifoat(dirfd: c_int, path: *const c_char, mode: mode_
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mkfifo.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mkfifo(path: *const c_char, mode: mode_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::mkfifo(path, mode).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mknod.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mknod(path: *const c_char, mode: mode_t, dev: dev_t) -> c_int {
     let path = unsafe { CStr::from_ptr(path) };
     Sys::mknod(path, mode, dev).map(|()| 0).or_minus_one_errno()
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/mknodat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn mknodat(
     dirfd: c_int,
     path: *const c_char,
@@ -242,7 +242,7 @@ pub unsafe extern "C" fn mknodat(
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/stat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn stat(file: *const c_char, buf: *mut stat) -> c_int {
     let file = unsafe { CStr::from_ptr(file) };
     let buf = unsafe { Out::nonnull(buf) };
@@ -250,13 +250,13 @@ pub unsafe extern "C" fn stat(file: *const c_char, buf: *mut stat) -> c_int {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/umask.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn umask(mask: mode_t) -> mode_t {
     Sys::umask(mask)
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/utimensat.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn utimensat(
     fd: c_int,
     path: *const c_char,

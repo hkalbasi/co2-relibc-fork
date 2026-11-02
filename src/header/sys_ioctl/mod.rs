@@ -28,7 +28,7 @@ pub struct sgttyb {
 /// Upon success, usually returns `0`. A few operations use the return value
 /// as an output parameter and returns a nonnegative value on success. Upon
 /// failure, `-1` is returned and errno set to indicate the error.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn ioctl(fd: c_int, request: c_ulong, out: *mut c_void) -> c_int {
     // TODO: Somehow support varargs to syscall??
     #[cfg(target_os = "linux")]

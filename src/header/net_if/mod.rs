@@ -47,7 +47,7 @@ const INTERFACES: &[if_nameindex] = &[
 ///
 /// # Safety
 /// this is a no-op: the list returned by if_nameindex() is a ref to a constant
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn if_freenameindex(s: *mut if_nameindex) {}
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/if_indextoname.html>.
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn if_freenameindex(s: *mut if_nameindex) {}
 /// Returns only static lifetime references to const names, does not reuse the buf pointer.
 /// Returns NULL in case of not found + ERRNO being set to ENXIO.
 /// Currently only checks against inteface index 1.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn if_indextoname(idx: c_uint, buf: *mut c_char) -> *const c_char {
     if idx == 1 {
         return IF_STUB_INTERFACE;
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn if_indextoname(idx: c_uint, buf: *mut c_char) -> *const
 /// # Safety
 /// Returns a constant pointer to a pre defined const stub list
 /// The end of the list is determined by an if_nameindex struct having if_index 0 and if_name NULL
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn if_nameindex() -> *const if_nameindex {
     core::ptr::from_ref::<if_nameindex>(&INTERFACES[0])
 }
@@ -80,7 +80,7 @@ pub unsafe extern "C" fn if_nameindex() -> *const if_nameindex {
 /// # Safety
 /// Compares the name to a constant string and only returns an int as a result.
 /// An invalid name string will return an index of 0
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn if_nametoindex(name: *const c_char) -> c_uint {
     if name.is_null() {
         return 0;

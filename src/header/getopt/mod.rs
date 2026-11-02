@@ -34,7 +34,7 @@ pub struct option {
 /// Non-POSIX, see <https://www.man7.org/linux/man-pages/man3/getopt.3.html>.
 ///
 /// Functions the same as `getopt` but also accepts long options.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn getopt_long(
     argc: c_int,
     argv: *const *mut c_char,
