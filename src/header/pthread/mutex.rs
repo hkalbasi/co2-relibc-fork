@@ -56,7 +56,7 @@ pub unsafe extern "C" fn pthread_mutex_init(
     }
 }
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/pthread_mutex_lock.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub unsafe extern "C" fn pthread_mutex_lock(mutex: *mut pthread_mutex_t) -> c_int {
     e((unsafe { &*mutex.cast::<RlctMutex>() }).lock())
 }
