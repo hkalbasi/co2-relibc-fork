@@ -533,7 +533,7 @@ pub unsafe extern "C" fn sigismember(set: *const sigset_t, signo: c_int) -> c_in
 /// `signal()` for the specified signal `sig`.Upon failure, returns `SIG_ERR`
 /// and a positive value shall be stored in errno.
 #[expect(clippy::missing_transmute_annotations, reason = "too verbose")]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn signal(
     sig: c_int,
     func: Option<extern "C" fn(c_int)>,
