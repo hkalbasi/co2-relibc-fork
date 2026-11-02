@@ -533,22 +533,31 @@ pub unsafe extern "C" fn sigismember(set: *const sigset_t, signo: c_int) -> c_in
 /// `signal()` for the specified signal `sig`.Upon failure, returns `SIG_ERR`
 /// and a positive value shall be stored in errno.
 #[expect(clippy::missing_transmute_annotations, reason = "too verbose")]
-#[cfg_attr(not(miri), unsafe(no_mangle))]
+#[unsafe(no_mangle)]
 pub extern "C" fn signal(
     sig: c_int,
     func: Option<extern "C" fn(c_int)>,
 ) -> Option<extern "C" fn(c_int)> {
-    let sa = sigaction {
-        sa_handler: func,
-        sa_flags: SA_RESTART as _,
-        sa_restorer: None, // set by platform if applicable
-        sa_mask: sigset_t::default(),
-    };
-    let mut old_sa = mem::MaybeUninit::uninit();
-    if unsafe { sigaction(sig, &raw const sa, old_sa.as_mut_ptr()) } < 0 {
-        return unsafe { mem::transmute(SIG_ERR) };
+    // Miri can't execute the raw `rt_sigaction` syscall, so signal handlers are not installed.
+    #[cfg(miri)]
+    {
+        let _ = (sig, func);
+        return None;
     }
-    unsafe { old_sa.assume_init() }.sa_handler
+    #[cfg(not(miri))]
+    {
+        let sa = sigaction {
+            sa_handler: func,
+            sa_flags: SA_RESTART as _,
+            sa_restorer: None, // set by platform if applicable
+            sa_mask: sigset_t::default(),
+        };
+        let mut old_sa = mem::MaybeUninit::uninit();
+        if unsafe { sigaction(sig, &raw const sa, old_sa.as_mut_ptr()) } < 0 {
+            return unsafe { mem::transmute(SIG_ERR) };
+        }
+        unsafe { old_sa.assume_init() }.sa_handler
+    }
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9699919799/functions/sighold.html>.
