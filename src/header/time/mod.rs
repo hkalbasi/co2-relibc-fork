@@ -121,23 +121,23 @@ static TIMEZONE_LOCK: Mutex<(Option<CString>, Option<CString>)> = Mutex::new((No
 // Should only be accessed by relibc when `TIMEZONE_LOCK` is held
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tzset.html>.
 #[allow(non_upper_case_globals)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static mut daylight: c_int = 0;
 
 // Should only be accessed by relibc when `TIMEZONE_LOCK` is held
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tzset.html>.
 #[allow(non_upper_case_globals)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static mut timezone: c_long = 0;
 
 // Should only be accessed by relibc when `TIMEZONE_LOCK` is held
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/tzset.html>.
 #[allow(non_upper_case_globals)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static mut tzname: TzName = TzName([ptr::null_mut(); 2]);
 
 #[allow(non_upper_case_globals)]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static mut getdate_err: c_int = 0;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/time.h.html>.

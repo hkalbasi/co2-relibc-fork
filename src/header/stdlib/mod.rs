@@ -123,11 +123,11 @@ pub unsafe extern "C" fn abort() -> ! {
 }
 
 #[cfg(not(target_pointer_width = "64"))]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static __stack_chk_guard: uintptr_t = 0x19fcadfe;
 
 #[cfg(target_pointer_width = "64")]
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static __stack_chk_guard: uintptr_t = 0xd048c37519fcadfe;
 
 #[cfg_attr(not(miri), unsafe(no_mangle))]

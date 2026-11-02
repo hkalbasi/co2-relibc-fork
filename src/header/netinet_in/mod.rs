@@ -167,13 +167,13 @@ pub struct group_source_req {
 }
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/netinet_in.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static in6addr_any: in6_addr = in6_addr {
     s6_addr: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/netinet_in.h.html>.
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static in6addr_loopback: in6_addr = in6_addr {
     s6_addr: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 };

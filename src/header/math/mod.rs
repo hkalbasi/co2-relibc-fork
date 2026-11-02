@@ -446,7 +446,7 @@ pub unsafe extern "C" fn ldexpf(x: c_float, exp: c_int) -> c_float {
 
 // TODO ldexpl (long double)
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 static mut signgam: c_int = 0;
 
 /// See <https://pubs.opengroup.org/onlinepubs/9799919799/functions/lgamma.html>.

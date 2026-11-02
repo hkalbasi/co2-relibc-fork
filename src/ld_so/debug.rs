@@ -134,5 +134,5 @@ impl LinkMap {
 #[cfg_attr(not(miri), unsafe(no_mangle))]
 pub extern "C" fn _dl_debug_state() {}
 
-#[unsafe(no_mangle)]
+#[cfg_attr(not(miri), unsafe(no_mangle))]
 pub static _r_debug: spin::Mutex<RTLDDebug> = spin::Mutex::new(RTLDDebug::NEW);
